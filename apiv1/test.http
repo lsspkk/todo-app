@@ -1,0 +1,18 @@
+### 
+GET http://127.0.0.1:5000/items HTTP/1.1
+### 
+GET http://127.0.0.1:5000/items/1 HTTP/1.1
+### 
+GET http://127.0.0.1:5000/docs HTTP/1.1
+
+### 
+POST http://127.0.0.1:5000/items HTTP/1.1 
+Content-Type: application/json 
+{ "name": "whatup"}
+
+### POST fail
+POST http://127.0.0.1:5000/items HTTP/1.1 
+Content-Type: application/json { "name": [1]}
+
+###
+DELETE http://127.0.0.1:5000/items/1 HTTP/1.1
