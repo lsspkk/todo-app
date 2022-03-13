@@ -7,3 +7,5 @@ services:
       - '5000:5000'
     environment:
       NODE_ENV: production
+      SECRET_COOKIE_KEY: ${SECRET_COOKIE_KEY}
+      INVITATION_CODE_SECRET: ${INVITATION_CODE_SECRET}

@@ -4,15 +4,13 @@
 
 backend
 
-- add jwt
-- add authenticate
-- add database
+- x add session
+- x add authenticate
+- x store users
+- x store files and items
 - add ci-script
-- store users
-- store settings
-- store projects
-- store todos
 - add search
+- add database
 
 frontend
 
