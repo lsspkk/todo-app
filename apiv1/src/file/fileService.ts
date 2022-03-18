@@ -2,14 +2,17 @@ import { files, setFiles } from './fileData'
 import { v4 } from 'uuid'
 import { ApiRequest } from 'server'
 import { PostFile } from './fileController'
-import { items } from 'item/itemData'
+import { items } from '../item/itemData'
 
 export const getFiles = ({ accountId }: ApiRequest, reply) => {
   if (!accountId) {
     reply.code(403).send()
     return
   }
-  reply.send(files.filter((file) => file.accountId === accountId))
+  const clean = files
+    .filter((file) => file.accountId === accountId)
+    .map(({ id, name, content, items }) => ({ id, name, itemCount: items ? items.length : 0 }))
+  reply.send(clean)
 }
 export const getFile = ({ accountId, params }: ApiRequest, reply) => {
   if (!accountId) {
@@ -22,7 +25,9 @@ export const getFile = ({ accountId, params }: ApiRequest, reply) => {
     reply.code(404).send()
     return
   }
-  reply.send(file)
+  const copy = { ...file }
+  delete file.accountId
+  reply.send(copy)
 }
 
 export const postFile = ({ accountId, ...req }, reply) => {
@@ -34,7 +39,7 @@ export const postFile = ({ accountId, ...req }, reply) => {
   const id = v4()
   const file = { id, accountId, ...newFile }
   setFiles([...files, file])
-  reply.send(file)
+  reply.send({ id, ...newFile })
 }
 
 export const putFile = ({ accountId, params, ...req }: ApiRequest, reply) => {

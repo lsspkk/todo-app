@@ -1,5 +1,6 @@
 import { deleteItem, getItem, getItems, postItem } from './itemService'
 import S from 'fluent-json-schema'
+import { postTodoSchema, Todo, todoSchema } from '../todo/todoController'
 
 export interface Item {
   id: string
@@ -8,6 +9,7 @@ export interface Item {
   content: string
   level: number
   children?: string[] // itemIds
+  todos?: Todo[]
 }
 
 export const itemSchema = S.object()
@@ -19,6 +21,7 @@ export const itemSchema = S.object()
   .prop('level', S.number())
   .required()
   .prop('children', S.array().items(S.string()))
+  .prop('todos', S.array().items(todoSchema))
 
 export const itemsSchema = S.array().items(itemSchema)
 

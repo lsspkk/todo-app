@@ -6,6 +6,8 @@ import 'dotenv/config'
 import { itemRoutes } from './item/itemController'
 import { accountRoutes } from './account/accountController'
 import secureSession from 'fastify-secure-session'
+import { fileRoutes } from './file/fileController'
+import { todoRoutes } from './todo/todoController'
 
 const fastify = Fastify({
   logger: true,
@@ -61,6 +63,8 @@ fastify.addHook('preHandler', (req: ApiRequest, reply, done) => {
 
 fastify.register(itemRoutes)
 fastify.register(accountRoutes)
+fastify.register(todoRoutes)
+fastify.register(fileRoutes)
 
 fastify.get('/health', async (req, reply) => ({ server: 'up' }))
 const PORT = process.env.FASTIFY_PORT ? process.env.FASTIFY_PORT : 5000

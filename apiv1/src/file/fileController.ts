@@ -1,6 +1,6 @@
 import { deleteFile, getFile, getFileItems, getFiles, postFile, putFile } from './fileService'
 import S from 'fluent-json-schema'
-import { itemsSchema } from 'item/itemController'
+import { itemsSchema } from '../item/itemController'
 
 export interface File {
   id: string

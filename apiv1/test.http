@@ -1,55 +1,65 @@
 ### 
-GET http://127.0.0.1:5000/health HTTP/1.1
+GET http://127.0.0.1:5000/health
 ### 
-GET http://127.0.0.1:5000/items HTTP/1.1
-Cookie: session=iNPBLlxDtpzRzCrUVzwFFK4GXK5aA6D26Gdy%2B%2Bkmreydl8nu6Wqif1YgxBr6TKw6UbBFkq8e7aT0nN5ckdvcdCVrNQ%3D%3D%3B1FFyApilmh6ugM1x539q%2FjjBKySGImxX;
+GET http://127.0.0.1:5000/items
+Cookie: session=...
 
 ### 
-GET http://127.0.0.1:5000/items/1 HTTP/1.1
-### 
-GET http://127.0.0.1:5000/docs HTTP/1.1
+GET http://127.0.0.1:5000/files
+Cookie: session=...
 
 ### 
-POST http://127.0.0.1:5000/items HTTP/1.1 
+GET http://127.0.0.1:5000/items/1
+Cookie: session=...
+
+### 
+GET http://127.0.0.1:5000/items/1/todos
+Cookie: session=...
+
+### 
+GET http://127.0.0.1:5000/docs
+
+### 
+POST http://127.0.0.1:5000/items 
 Content-Type: application/json 
 
 { "name": "whatup"}
 
 ### POST fail
-POST http://127.0.0.1:5000/items HTTP/1.1 
+POST http://127.0.0.1:5000/items 
 Content-Type: application/json 
 
 { "name": [1]}
 
 ###
-DELETE http://127.0.0.1:5000/items/1 HTTP/1.1
+DELETE http://127.0.0.1:5000/items/1
 
 
 
 
 
 ### 
-GET http://127.0.0.1:5000/accounts HTTP/1.1
+GET http://127.0.0.1:5000/accounts
 
 ###
-POST http://127.0.0.1:5000/accounts/login HTTP/1.1 
+POST http://127.0.0.1:5000/accounts/login 
 Content-Type: application/json 
 
 { "username": "admin", "password": "admin"}
 
 ### 
-GET http://127.0.0.1:5000/accounts/logout HTTP/1.1
+GET http://127.0.0.1:5000/accounts/logout
 
 ###
-POST http://127.0.0.1:5000/accounts/register HTTP/1.1 
+POST http://127.0.0.1:5000/accounts/register 
 Content-Type: application/json 
 
 { "username": "admin3", "password": "admin", "invitationCode": "1234"}
 
 ###
-POST http://127.0.0.1:5000/accounts/1/changePassword HTTP/1.1 
+POST http://127.0.0.1:5000/accounts/1/changePassword 
 Content-Type: application/json 
-Cookie: session=ruxvjL2mOtx4w4csxP7%2Fi1j5PnboCqz9p4jVl%2Fm%2F2%2FALWG0h%3BrZL6lgGow9Qa%2F%2BT8wEUHMUgLUyxO%2Foyo
+Cookie: session=rux...
 
 { "oldPassword": "admin", "newPassword": "admin" }
 
