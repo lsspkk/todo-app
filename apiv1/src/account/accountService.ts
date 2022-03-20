@@ -26,7 +26,7 @@ export const getAccount = ({ isAdmin, username, params }: ApiRequest, reply) => 
   }
 }
 
-interface RegisterDto {
+interface SignUpDto {
   username: string
   password: string
   invitationCode: string
@@ -35,8 +35,8 @@ interface RegisterDto {
 
 const invitationCode = process.env.INVITATION_CODE_SECRET
 
-export const registerAccount = async ({ isAdmin, ...req }: ApiRequest, reply) => {
-  const body = req.body as RegisterDto
+export const signUpAccount = async ({ isAdmin, ...req }: ApiRequest, reply) => {
+  const body = req.body as SignUpDto
   if (!isAdmin && body.invitationCode !== invitationCode) {
     reply.code(400).send(new Error('Bad invitation code'))
     return
@@ -103,6 +103,7 @@ export const loginAccount = async ({ body, session }, reply) => {
     reply.code(400).send(new Error('Bad username or password'))
     return
   }
+  console.log('1111111111111', username, password)
   session.set('accountId', account.id)
   session.set('username', username)
   session.set('role', account.role)

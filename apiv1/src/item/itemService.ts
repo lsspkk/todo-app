@@ -11,7 +11,14 @@ export const getItems = ({ accountId }: ApiRequest, reply) => {
   }
   const clean = items
     .filter((item) => item.accountId === accountId)
-    .map(({ id, title, content }) => ({ id, title, content, todoCount: getTodoCount(accountId, id) }))
+    .map(({ id, title, content, level, children }) => ({
+      id,
+      title,
+      content,
+      level,
+      children,
+      todoCount: getTodoCount(accountId, id),
+    }))
   reply.send(clean)
 }
 export const getItem = ({ accountId, params }: ApiRequest, reply) => {

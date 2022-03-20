@@ -38,10 +38,27 @@ fastify.register(fastifySwagger, {
 })
 fastify.register(secureSession, {
   key: Buffer.from(process.env.SECRET_COOKIE_KEY, 'hex'),
-  cookieName: 'session',
+  cookieName: 'todosession',
   cookie: {
     path: '/',
   },
+})
+
+const allowedOrigin = !process.env.CORS_ALLOWED_ORIGIN ? 'http://localhost:3000' : process.env.CORS_ALLOWED_ORIGIN
+fastify.register(require('fastify-cors'), {
+  origin: [allowedOrigin],
+  allowedHeaders: [
+    'Access-Control-Allow-Origin',
+    'Origin',
+    'X-Requested-With',
+    'Accept',
+    'Content-Type',
+    'Authorization',
+    'Cookie',
+  ],
+  exposedHeaders: 'Authorization',
+  credentials: true,
+  methods: ['GET', 'PUT', 'OPTIONS', 'POST', 'DELETE'],
 })
 
 export interface ApiRequest extends FastifyRequest {

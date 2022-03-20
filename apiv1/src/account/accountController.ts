@@ -1,5 +1,5 @@
 import {
-  registerAccount,
+  signUpAccount,
   changePassword,
   loginAccount,
   getAccount,
@@ -16,7 +16,7 @@ export interface Account {
   role: 'ADMIN' | 'USER'
 }
 
-const registerSchema = S.object()
+const signUpSchema = S.object()
   .prop('username', S.string())
   .required()
   .prop('password', S.string())
@@ -41,12 +41,12 @@ export function accountRoutes(fastify, options, done) {
   fastify.post('/accounts/login', { body: loginSchema, schema: accountSchema }, loginAccount)
   fastify.get('/accounts/logout', { response: 200 }, logoutAccount)
   fastify.post(
-    '/accounts/register',
+    '/accounts/signUp',
     {
-      body: registerSchema,
+      body: signUpSchema,
       schema: accountSchema,
     },
-    registerAccount
+    signUpAccount
   )
   fastify.get('/accounts/:id', { schema: accountSchema }, getAccount)
   fastify.post('/accounts/:id/changePassword', { body: changePasswordSchema }, changePassword)
