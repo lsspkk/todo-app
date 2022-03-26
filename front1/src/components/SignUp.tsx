@@ -2,8 +2,8 @@ import { ClockIcon, LockClosedIcon } from '@heroicons/react/solid'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../api/apiTypes'
-import { useAppDispatch } from '../hooks'
-import { userSignUp } from '../reducers/userReducer'
+import { useAppDispatch } from '../store/hooks'
+import { userSignUp } from '../store/userReducer'
 
 interface FormData {
   username: string
@@ -30,7 +30,7 @@ export default function MainSignUp() {
     if (password !== passwordConfirm) throw new Error('Salasanat eivät täsmää')
     if (invitationCode.length < 1) throw new Error('Kutsukoodi on pakollinen')
     const { type, payload } = await dispatch(userSignUp({ username, password, invitationCode }))
-    if (type === 'user/signUp/rejected') {
+    if (type === 'signUp/rejected') {
       const { message: msg } = payload as ApiError
       setMessage(msg)
       setTimeout(() => setMessage(''), 5000)

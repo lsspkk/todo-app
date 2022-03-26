@@ -1,4 +1,5 @@
-import { ApiError, Item, UserAccount } from './apiTypes'
+import { TodoItemUpdate } from 'store/itemsReducer'
+import { ApiError, Item, Todo, UserAccount } from './apiTypes'
 
 const apiUrl = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : 'http://localhost:5000'
 
@@ -56,4 +57,20 @@ export async function getItem(id: string): Promise<Item> {
   const response = await window.fetch(`${apiUrl}/items/${id}`, { credentials: 'include' })
   if (!response.ok) return (await response.json()).message
   return response.json()
+}
+
+export async function putTodo({ itemId, todo }: TodoItemUpdate, thunkApi: any): Promise<TodoItemUpdate> {
+  const response = await window.fetch(`${apiUrl}/items/${itemId}/todos/${todo.id}`, {
+    method: 'PUT',
+    headers: {
+      'content-type': 'application/json;charset=UTF-8',
+    },
+    credentials: 'include',
+    body: JSON.stringify(todo),
+  })
+
+  const data = await response.json()
+  console.log(data)
+  if (!response.ok) return thunkApi.rejectWithValue(data)
+  return { itemId, todo: data as Todo }
 }

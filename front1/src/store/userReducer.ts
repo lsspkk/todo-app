@@ -14,8 +14,8 @@ export const initialUserState: UserSession = {
 }
 export type UserAction =
   | { type: 'NONE' }
-  | { type: 'user/login/fulfilled'; payload: UserAccount }
-  | { type: 'user/signUp/fulfilled'; payload: UserAccount }
+  | { type: 'login/fulfilled'; payload: UserAccount }
+  | { type: 'signUp/fulfilled'; payload: UserAccount }
   | { type: 'LOGOUT'; payload: {} }
   | { type: 'ADD_ERROR'; payload: { error: string } }
 
@@ -23,13 +23,16 @@ export const userReducer = (
   state: UserSession = initialUserState,
   action: UserAction = { type: 'NONE' }
 ): UserSession => {
-  if (action.type === 'user/login/fulfilled') {
-    return { ...state, isLoggedIn: true, username: action.payload.username }
+  if (action.type === 'login/fulfilled') {
+    const { username } = action.payload
+    localStorage.setItem('todoUser', JSON.stringify(action.payload))
+    return { ...state, isLoggedIn: true, username }
   }
-  if (action.type === 'user/signUp/fulfilled') {
+  if (action.type === 'signUp/fulfilled') {
     return { ...state }
   }
   if (action.type === 'LOGOUT') {
+    localStorage.removeItem('todoUser')
     return { ...state, isLoggedIn: false, username: '' }
   }
   if (action.type === 'ADD_ERROR') {
@@ -40,11 +43,11 @@ export const userReducer = (
 }
 
 export const userLogin = createAsyncThunk<UserAccount, LoginBody, { rejectValue: ApiError }>(
-  'user/login',
+  'login',
   async (body: LoginBody, thunkApi) => postAccountLogin(body, thunkApi)
 )
 export const userSignUp = createAsyncThunk<UserAccount, SignUpBody, { rejectValue: ApiError }>(
-  'user/signUp',
+  'signUp',
   async (body: SignUpBody, thunkApi) => postAccountSignUp(body, thunkApi)
 )
 

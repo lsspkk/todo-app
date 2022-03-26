@@ -1,7 +1,7 @@
 import { todos, setTodos } from './todoData'
 import { v4 } from 'uuid'
 import { ApiRequest } from 'server'
-import { PostTodo } from './todoController'
+import { PostTodo, Todo } from './todoController'
 
 export const getTodos = ({ accountId, params }: ApiRequest, reply) => {
   if (!accountId) {
@@ -60,14 +60,14 @@ export const putTodo = ({ accountId, params, ...req }: ApiRequest, reply) => {
     return
   }
   const { id } = params as { id: string }
-  const todo = todos.find((i) => i.id === id)
-  if (!todo) {
+  if (!todos.find((i) => i.id === id)) {
     reply.code(404).send()
     return
   }
-  const { title, content, children } = req.body as PostTodo
-  const newTodos = todos.map((i) => (i.id !== id ? { ...i } : { ...i, title, content, children }))
+  const todo = { ...(req.body as Todo), accountId }
+  const newTodos = todos.map((i) => (i.id !== id ? { ...i } : { ...todo }))
   setTodos(newTodos)
+  reply.send(todo)
 }
 
 export const deleteTodo = ({ accountId, params }: ApiRequest, reply) => {

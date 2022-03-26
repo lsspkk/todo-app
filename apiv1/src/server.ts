@@ -41,6 +41,7 @@ fastify.register(secureSession, {
   cookieName: 'todosession',
   cookie: {
     path: '/',
+    domain: 'localhost',
   },
 })
 

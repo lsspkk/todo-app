@@ -40,7 +40,7 @@ export const postTodoSchema = S.object()
 export function todoRoutes(fastify, options, done) {
   fastify.get('/items/:itemId/todos', { schema: todosSchema }, getTodos)
   fastify.post('/items/:itemId/todos', { body: postTodoSchema, schema: todoSchema }, postTodo)
-  fastify.put('/items/:itemId/todos:id', { body: postTodoSchema, schema: todoSchema }, putTodo)
+  fastify.put('/items/:itemId/todos/:id', { body: todoSchema, schema: todoSchema }, putTodo)
   fastify.delete('/items/:itemId/todos/:id', {}, deleteTodo)
   fastify.get('/items/:itemId/todos/:id', { schema: todoSchema }, getTodo)
 

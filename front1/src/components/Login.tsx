@@ -18,8 +18,8 @@ import { ClockIcon, LockClosedIcon } from '@heroicons/react/solid'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '../api/apiTypes'
-import { useAppDispatch } from '../hooks'
-import { userLogin } from '../reducers/userReducer'
+import { useAppDispatch } from '../store/hooks'
+import { userLogin } from '../store/userReducer'
 
 export default function MainLogin() {
   const [formData, setFormData] = useState<{ username: string; password: string }>({ username: '', password: '' })
@@ -30,7 +30,7 @@ export default function MainLogin() {
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const { type, payload } = await dispatch(userLogin(formData))
-    if (type === 'user/login/rejected') {
+    if (type === 'login/rejected') {
       const { message: msg } = payload as ApiError
       setMessage(msg)
       setTimeout(() => setMessage(''), 5000)

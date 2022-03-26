@@ -2,8 +2,8 @@
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
-import { userLogout } from '../reducers/userReducer'
-import { store } from '../store'
+import { userLogout } from '../store/userReducer'
+import { store } from 'store/store'
 import { useNavigate } from 'react-router-dom'
 import { ClockIcon } from '@heroicons/react/solid'
 

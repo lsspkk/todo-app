@@ -1,4 +1,4 @@
-import { store } from '../store'
+import { store } from './store'
 import { userLogin } from './userReducer'
 
 const OLD_ENV = process.env

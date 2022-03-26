@@ -5,8 +5,8 @@ import App from './App'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { LoginPage } from './LoginPage'
 import { Provider } from 'react-redux'
-import { store } from './store'
 import { SignUpPage } from './SignUpPage'
+import { store } from 'store/store'
 
 ReactDOM.render(
   <React.StrictMode>

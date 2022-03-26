@@ -103,7 +103,6 @@ export const loginAccount = async ({ body, session }, reply) => {
     reply.code(400).send(new Error('Bad username or password'))
     return
   }
-  console.log('1111111111111', username, password)
   session.set('accountId', account.id)
   session.set('username', username)
   session.set('role', account.role)
@@ -112,7 +111,7 @@ export const loginAccount = async ({ body, session }, reply) => {
 }
 export const logoutAccount = (req, reply) => {
   req.session.delete()
-  reply.send()
+  reply.clearCookie('todosession').send()
 }
 
 export const deleteAccount = ({ params, session, isAdmin, username }: ApiRequest, reply) => {

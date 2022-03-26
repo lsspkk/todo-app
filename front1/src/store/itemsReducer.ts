@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { getItem, getItems } from '../api/api'
-import { Item, Todo } from '../api/apiTypes'
+import { getItem, getItems, putTodo } from '../api/api'
+import { ApiError, Item, Todo } from '../api/apiTypes'
 
 export interface ItemsStore {
   items: Item[]
@@ -15,21 +15,22 @@ export interface TodoItemUpdate {
 
 export type ItemsStoreAction =
   | { type: 'NONE' }
-  | { type: 'items/getItems/fulfilled'; payload: Item[] }
-  | { type: 'items/getItem/fulfilled'; payload: Item }
-  | { type: 'items/todo/update'; payload: TodoItemUpdate }
+  | { type: 'getItems/fulfilled'; payload: Item[] }
+  | { type: 'getItem/fulfilled'; payload: Item }
+  | { type: 'putTodo/fulfilled'; payload: TodoItemUpdate }
 
 export const itemsReducer = (
   state: ItemsStore = initialUserState,
   action: ItemsStoreAction = { type: 'NONE' }
 ): ItemsStore => {
-  if (action.type === 'items/getItems/fulfilled') {
+  //console.debug({ action })
+  if (action.type === 'getItems/fulfilled') {
     return { ...state, items: action.payload }
   }
-  if (action.type === 'items/getItem/fulfilled') {
+  if (action.type === 'getItem/fulfilled') {
     return { ...state, items: state.items.map((i) => (i.id === action.payload.id ? action.payload : i)) }
   }
-  if (action.type === 'items/todo/update') {
+  if (action.type === 'putTodo/fulfilled') {
     return {
       ...state,
       items: state.items.map((i) =>
@@ -37,16 +38,16 @@ export const itemsReducer = (
       ),
     }
   }
-  console.debug({ action })
   return state
 }
 
-export const loadItemList = createAsyncThunk('items/getItems', async () => getItems())
-export const loadItem = createAsyncThunk('items/getItem', async (id: string) => getItem(id))
-export const updateItemTodo = (itemId: string, todo: Todo): ItemsStoreAction => ({
-  type: 'items/todo/update',
-  payload: { itemId, todo },
-})
+export const loadItemList = createAsyncThunk('getItems', async () => getItems())
+export const loadItem = createAsyncThunk('getItem', async (id: string) => getItem(id))
+
+export const updateItemTodo = createAsyncThunk<TodoItemUpdate, TodoItemUpdate, { rejectValue: ApiError }>(
+  'putTodo',
+  async (todo: TodoItemUpdate, thunkApi) => putTodo(todo, thunkApi)
+)
 
 function doUpdateItemTodo(updatedTodo: Todo, oldTodos?: Todo[]) {
   if (!oldTodos || oldTodos.length === 0) {
@@ -56,6 +57,5 @@ function doUpdateItemTodo(updatedTodo: Todo, oldTodos?: Todo[]) {
   if (!found) {
     return [...oldTodos, { ...updatedTodo }]
   }
-  console.log(oldTodos, updatedTodo)
   return oldTodos.map((t) => (t.id !== updatedTodo.id ? t : { ...updatedTodo }))
 }
