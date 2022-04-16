@@ -1,6 +1,6 @@
 import { deleteFile, getFile, getFileItems, getFiles, postFile, putFile } from './fileService'
 import S from 'fluent-json-schema'
-import { itemsSchema } from '../item/itemController'
+import { itemsSchema, PostItem, postItemSchema } from '../item/itemController'
 
 export interface File {
   id: string
@@ -20,10 +20,13 @@ const filesSchema = S.array().items(fileSchema)
 export interface PostFile {
   name: string
   content: string
-  items?: string[]
+  items?: PostItem[]
 }
 
-const postFileSchema = S.object().prop('name', S.string().required()).prop('content', S.string())
+const postFileSchema = S.object()
+  .prop('name', S.string().required())
+  .prop('content', S.string())
+  .prop('items', S.array().items(postItemSchema))
 
 export function fileRoutes(fastify, options, done) {
   fastify.get('/files', { schema: filesSchema }, getFiles)

@@ -1,8 +1,10 @@
 import { files, setFiles } from './fileData'
 import { v4 } from 'uuid'
 import { ApiRequest } from 'server'
-import { PostFile } from './fileController'
-import { items } from '../item/itemData'
+import { File, PostFile } from './fileController'
+import { items, setItems } from '../item/itemData'
+import { Item } from '../item/itemController'
+import { setTodos, todos } from '../todo/todoData'
 
 export const getFiles = ({ accountId }: ApiRequest, reply) => {
   if (!accountId) {
@@ -26,10 +28,15 @@ export const getFile = ({ accountId, params }: ApiRequest, reply) => {
     return
   }
   const copy = { ...file }
-  delete file.accountId
+  delete copy.accountId
   reply.send(copy)
 }
 
+/**
+ * File has items that have todos.
+ * All these are created and their ids are used for relations.
+ *
+ */
 export const postFile = ({ accountId, ...req }, reply) => {
   if (!accountId) {
     reply.code(403).send()
@@ -38,7 +45,33 @@ export const postFile = ({ accountId, ...req }, reply) => {
   const newFile = req.body as PostFile
   const id = v4()
   const file = { id, accountId, ...newFile }
-  setFiles([...files, file])
+
+  const newItems: Item[] | undefined = file.items?.map(({ title, content, level, ...newItem }) => {
+    const itemId = v4()
+    const todos = newItem.newTodos?.map(({ content, done, title }) => ({
+      id: v4(),
+      itemId,
+      accountId,
+      content,
+      done,
+      title,
+    }))
+
+    return { id: itemId, accountId, fileId: id, title, content, level, todos }
+  })
+
+  if (newItems) {
+    setItems([...items, ...newItems])
+
+    const newTodos = newItems.flatMap(({ todos }) => (todos ? todos : []))
+    if (newTodos) {
+      setTodos([...todos, ...newTodos])
+    }
+  }
+
+  const fileWithItemIds: File = { ...file, items: newItems?.map((i) => i.id) }
+
+  setFiles([...files, fileWithItemIds])
   reply.send({ id, ...newFile })
 }
 
@@ -80,6 +113,6 @@ export const getFileItems = ({ accountId, params }: ApiRequest, reply) => {
     return
   }
   const { items: wanted } = file
-  const fileItems = items.filter((i) => i.accountId === accountId && wanted.includes(i.id))
+  const fileItems = items.filter((i) => i.accountId === accountId && wanted?.includes(i.id))
   reply.send(fileItems)
 }

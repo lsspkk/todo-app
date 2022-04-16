@@ -26,6 +26,7 @@ export const userReducer = (
   if (action.type === 'login/fulfilled') {
     const { username } = action.payload
     localStorage.setItem('todoUser', JSON.stringify(action.payload))
+    //console.log(action.type)
     return { ...state, isLoggedIn: true, username }
   }
   if (action.type === 'signUp/fulfilled') {

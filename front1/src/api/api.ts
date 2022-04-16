@@ -1,5 +1,5 @@
 import { TodoItemUpdate } from 'store/itemsReducer'
-import { ApiError, Item, Todo, UserAccount } from './apiTypes'
+import { File, Item, NewFile, Todo, UserAccount } from './apiTypes'
 
 const apiUrl = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : 'http://localhost:5000'
 
@@ -47,6 +47,12 @@ export async function getAccountLogout(): Promise<void> {
   return Promise.resolve()
 }
 
+export async function getFileItems(fileId: string): Promise<Item[]> {
+  const response = await window.fetch(`${apiUrl}/files/${fileId}/items`, { credentials: 'include' })
+  if (!response.ok) return (await response.json()).message
+  return response.json()
+}
+
 export async function getItems(): Promise<Item[]> {
   const response = await window.fetch(`${apiUrl}/items`, { credentials: 'include' })
   if (!response.ok) return (await response.json()).message
@@ -70,7 +76,32 @@ export async function putTodo({ itemId, todo }: TodoItemUpdate, thunkApi: any): 
   })
 
   const data = await response.json()
-  console.log(data)
   if (!response.ok) return thunkApi.rejectWithValue(data)
   return { itemId, todo: data as Todo }
+}
+
+export async function getFiles(): Promise<File[]> {
+  const response = await window.fetch(`${apiUrl}/files`, { credentials: 'include' })
+  if (!response.ok) return (await response.json()).message
+  return response.json()
+}
+
+export async function getFile(id: string): Promise<File> {
+  const response = await window.fetch(`${apiUrl}/files/${id}`, { credentials: 'include' })
+  if (!response.ok) return (await response.json()).message
+  return response.json()
+}
+
+export async function postFile(newFile: NewFile, thunkApi: any): Promise<File> {
+  const response = await window.fetch(`${apiUrl}/files`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json;charset=UTF-8',
+    },
+    credentials: 'include',
+    body: JSON.stringify(newFile),
+  })
+  const data = await response.json()
+  if (!response.ok) return thunkApi.rejectWithValue(data)
+  return data as File
 }

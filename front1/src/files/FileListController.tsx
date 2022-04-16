@@ -1,0 +1,66 @@
+import { NewFile } from 'api/apiTypes'
+import Button from 'components/Button'
+import Error from 'components/Error'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { addFile, loadFile, loadFileList } from 'store/filesReducer'
+import { useAppDispatch, useAppSelector } from 'store/hooks'
+import { loadFileItemList } from 'store/itemsReducer'
+import { AddFileDialog } from './AddFileDialog'
+import { FileList } from './FileList'
+
+export function FileListController() {
+  const [showAdd, setShowAdd] = useState(false)
+  const dispatch = useAppDispatch()
+  const { files } = useAppSelector((state) => state.files)
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    dispatch(loadFileList())
+  }, [dispatch])
+
+  async function saveFile(newFile: NewFile) {
+    const r = await dispatch(addFile(newFile))
+    if (r.type !== 'postFile/fulfilled') {
+      setError('Tiedoston tallennus epäonnistui')
+      setTimeout(() => setError(''), 5000)
+    } else {
+      hideAdd()
+    }
+  }
+
+  async function handleLoadItems(fileId: string) {
+    await dispatch(loadFile(fileId))
+    await dispatch(loadFileItemList(fileId))
+    navigate('/')
+  }
+
+  function hideAdd() {
+    setShowAdd(false)
+  }
+
+  return (
+    <div className='bg-white shadow overflow-hidden sm:rounded-lg'>
+      <div className='px-4 py-5'>
+        <h3 className='text-lg leading-6 font-medium text-gray-900'>Tiedostot</h3>
+        <div className='flex'>
+          <div className='w-5/6 bg-gray-50 text-sm font-medium text-gray-500'>Tiedostoja yhteensä:{files.length}</div>
+          <div className='w-1/6'>
+            {!showAdd && (
+              <>
+                <Button className='bg-indigo-200 text-black hover:bg-indigo-300' onClick={() => setShowAdd(true)}>
+                  Lue
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+        {error && <Error>{error}</Error>}
+        {showAdd && <AddFileDialog {...{ saveFile, hideAdd }} />}
+        {!showAdd && <FileList {...{ files, handleLoadItems }} />}
+      </div>
+      <div className='border-t border-gray-200'></div>
+    </div>
+  )
+}

@@ -1,8 +1,14 @@
 # Opiskellaan reduxia
 
 Miten näytetään loading indicator tälle: items/getItems/pending
+
+
+
 Miten render sivulle latautumisen jälkeen.
 Miksi todo -> done ei päivity itemiin ellei avaa, sulje jotain menua..
+Koska jos haluat reagoida storen päivitykseen tarvii käyttää hookkia:
+  const { items } = useAppSelector((state) => state.items)
+
 
 # Getting Started with Create React App
 

@@ -28,6 +28,7 @@ export interface PostTodo {
   content: string
   level: number
   children?: string[] // todoIds
+  done?: boolean
 }
 
 export const postTodoSchema = S.object()

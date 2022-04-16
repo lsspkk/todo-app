@@ -1,8 +1,12 @@
 # todo-app
 
+redux/fastify stuff
+
+redusers written in same style as react context, no slices...
+
 # TODO
 
-backend
+## backend
 
 - x add session
 - x add authenticate
@@ -12,12 +16,20 @@ backend
 - add search
 - add database
 
-frontend
+## frontend
 
-- create react app
-- get some tailwind components
-- add authenticate
-- useswr
-- parse md-file
-- import md-file
-- save md files with date
+- x create react app
+- x get some tailwind components
+- x add authenticate
+- x redux for state and api requests
+- x parse md-file
+- x import md-file
+- x save md files (could use date)
+- improve design
+- clean up components, add hooks etc.
+- add storybook
+
+# markdown parser
+
+You might want to generate ids at frontend, so that parser could build
+the tree structure of headers using children ids.

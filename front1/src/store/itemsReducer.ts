@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { getItem, getItems, putTodo } from '../api/api'
+import { getFileItems, getItem, getItems, putTodo } from '../api/api'
 import { ApiError, Item, Todo } from '../api/apiTypes'
 
 export interface ItemsStore {
@@ -16,6 +16,7 @@ export interface TodoItemUpdate {
 export type ItemsStoreAction =
   | { type: 'NONE' }
   | { type: 'getItems/fulfilled'; payload: Item[] }
+  | { type: 'getFileItems/fulfilled'; payload: Item[] }
   | { type: 'getItem/fulfilled'; payload: Item }
   | { type: 'putTodo/fulfilled'; payload: TodoItemUpdate }
 
@@ -25,6 +26,9 @@ export const itemsReducer = (
 ): ItemsStore => {
   //console.debug({ action })
   if (action.type === 'getItems/fulfilled') {
+    return { ...state, items: action.payload }
+  }
+  if (action.type === 'getFileItems/fulfilled') {
     return { ...state, items: action.payload }
   }
   if (action.type === 'getItem/fulfilled') {
@@ -41,6 +45,7 @@ export const itemsReducer = (
   return state
 }
 
+export const loadFileItemList = createAsyncThunk('getFileItems', async (fileId: string) => getFileItems(fileId))
 export const loadItemList = createAsyncThunk('getItems', async () => getItems())
 export const loadItem = createAsyncThunk('getItem', async (id: string) => getItem(id))
 

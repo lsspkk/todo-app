@@ -4,12 +4,13 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { userLogout } from '../store/userReducer'
 import { store } from 'store/store'
-import { useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ClockIcon } from '@heroicons/react/solid'
+import { useAppSelector } from 'store/hooks'
 
 const navigation = [
-  { name: 'Tehtävät', href: '#', current: true },
-  { name: 'Tiedostot', href: '#', current: false },
+  { name: 'Tehtävät', href: '/', current: true },
+  { name: 'Tiedostot', href: '/files', current: false },
 ]
 
 function classNames(...classes: any) {
@@ -17,12 +18,14 @@ function classNames(...classes: any) {
 }
 
 export default function MainMenu() {
+  const { username } = useAppSelector((state) => state.user)
   const navigate = useNavigate()
   async function handleLogout() {
     const action = await userLogout()
     store.dispatch(action)
     navigate('/login')
   }
+  const pathname = useLocation().pathname
 
   return (
     <Disclosure as='nav' className='bg-gray-800'>
@@ -49,17 +52,19 @@ export default function MainMenu() {
                 <div className='hidden sm:block sm:ml-6'>
                   <div className='flex space-x-4'>
                     {navigation.map((item) => (
-                      <a
+                      <Link
                         key={item.name}
-                        href={item.href}
+                        to={item.href}
                         className={classNames(
-                          item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                          item.href === pathname
+                            ? 'bg-gray-900 text-white'
+                            : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                           'px-3 py-2 rounded-md text-sm font-medium'
                         )}
-                        aria-current={item.current ? 'page' : undefined}
+                        aria-current={item.href === pathname ? 'page' : undefined}
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -91,6 +96,15 @@ export default function MainMenu() {
                     leaveTo='transform opacity-0 scale-95'
                   >
                     <Menu.Items className='origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                      {username && (
+                        <Menu.Item>
+                          {() => (
+                            <div className={classNames('block px-4 py-2 text-sm text-gray-400 text-center')}>
+                              {username}
+                            </div>
+                          )}
+                        </Menu.Item>
+                      )}
                       <Menu.Item>
                         {({ active }) => (
                           <a

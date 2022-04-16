@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react'
-import './App.css'
-import MainMenu from './components/Menu'
-import { useNavigate } from 'react-router-dom'
-import { ItemList } from './components/ItemList'
+import './Home.css'
+import MainMenu from '../components/Menu'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from 'store/hooks'
 import { UserAccount } from 'api/apiTypes'
+import { ItemListController } from './ItemListController'
+import { FileListController } from 'files/FileListController'
 
-function App() {
+function Home() {
   const navigate = useNavigate()
   const { isLoggedIn } = useAppSelector((state) => state.user)
   const dispatch = useAppDispatch()
@@ -28,9 +29,14 @@ function App() {
   return (
     <div>
       <MainMenu />
-      <ItemList />
+      <div className='max-w-7xl mx-auto'>
+        <Routes>
+          <Route path='/files' element={<FileListController />}></Route>
+          <Route path='/' element={<ItemListController />}></Route>
+        </Routes>
+      </div>
     </div>
   )
 }
 
-export default App
+export default Home

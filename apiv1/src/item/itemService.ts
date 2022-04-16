@@ -1,8 +1,9 @@
 import { items, setItems } from './itemData'
 import { v4 } from 'uuid'
 import { ApiRequest } from 'server'
-import { PostItem } from './itemController'
+import { Item, PostItem } from './itemController'
 import { getCleanTodos, getTodoCount } from '../todo/todoService'
+import { setTodos, todos } from 'todo/todoData'
 
 export const getItems = ({ accountId }: ApiRequest, reply) => {
   if (!accountId) {
@@ -44,11 +45,25 @@ export const postItem = ({ accountId, ...req }, reply) => {
     return
   }
   const newItem = req.body as PostItem
-  const id = v4()
-  const item = { id, accountId, ...newItem }
+  const itemId = v4()
+
+  const newTodos = newItem.newTodos?.map(({ content, done, title }) => ({
+    id: v4(),
+    itemId,
+    accountId,
+    content,
+    done,
+    title,
+  }))
+
+  if (newTodos) {
+    setTodos([...todos, ...newTodos])
+  }
+
+  const item: Item = { id: itemId, accountId, ...newItem, todos: newTodos }
 
   setItems([...items, item])
-  reply.send({ id, ...newItem })
+  reply.send({ item })
 }
 
 export const putItem = ({ accountId, params, ...req }: ApiRequest, reply) => {
@@ -57,14 +72,15 @@ export const putItem = ({ accountId, params, ...req }: ApiRequest, reply) => {
     return
   }
   const { id } = params as { id: string }
-  const item = items.find((i) => i.id === id)
-  if (!item) {
+  if (!items.find((i) => i.id === id)) {
     reply.code(404).send()
     return
   }
-  const { title, content, children } = req.body as PostItem
-  const newItems = items.map((i) => (i.id !== id ? { ...i } : { ...i, title, content, children }))
+  const item = { ...(req.body as Item), accountId }
+  item.todos = undefined // could handle update of todos here
+  const newItems = items.map((i) => (i.id !== id ? { ...i } : { ...item }))
   setItems(newItems)
+  reply.send(item)
 }
 
 export const deleteItem = ({ accountId, params }: ApiRequest, reply) => {

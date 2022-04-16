@@ -1,61 +1,20 @@
-/*
-  This example requires Tailwind CSS v2.0+ 
-  
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
+import React, { ChangeEvent, FormEvent } from 'react'
+import Button from 'components/Button'
 import { ClockIcon, LockClosedIcon } from '@heroicons/react/solid'
-import { ChangeEvent, FormEvent, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ApiError } from '../api/apiTypes'
-import { useAppDispatch } from '../store/hooks'
-import { userLogin } from '../store/userReducer'
 
-export default function MainLogin() {
-  const [formData, setFormData] = useState<{ username: string; password: string }>({ username: '', password: '' })
-  const [message, setMessage] = useState('')
-  const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const { type, payload } = await dispatch(userLogin(formData))
-    if (type === 'login/rejected') {
-      const { message: msg } = payload as ApiError
-      setMessage(msg)
-      setTimeout(() => setMessage(''), 5000)
-      return
-    }
-    navigate('/')
-  }
-
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
-
+export default function LoginForm({
+  formData,
+  handleChange,
+  handleSubmit,
+  message,
+}: {
+  formData: { username: string; password: string }
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => void
+  handleSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>
+  message: String
+}) {
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-gray-50">
-        <body class="h-full">
-        ```
-      */}
       <div className='min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
         <div className='max-w-md w-full space-y-8'>
           <div className='flex justify-between'>
@@ -109,15 +68,12 @@ export default function MainLogin() {
             </div>
 
             <div>
-              <button
-                type='submit'
-                className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-              >
+              <Button type='submit'>
                 <span className='absolute left-0 inset-y-0 flex items-center pl-3'>
                   <LockClosedIcon className='h-5 w-5 text-indigo-500 group-hover:text-indigo-400' aria-hidden='true' />
                 </span>
                 Kirjaudu
-              </button>
+              </Button>
             </div>
             {message !== '' && <div className='text-red-500 text-sm p-2 my-4'>{message}</div>}
           </form>
