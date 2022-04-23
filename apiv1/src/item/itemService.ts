@@ -3,7 +3,7 @@ import { v4 } from 'uuid'
 import { ApiRequest } from 'server'
 import { Item, PostItem } from './itemController'
 import { getCleanTodos, getTodoCount } from '../todo/todoService'
-import { setTodos, todos } from 'todo/todoData'
+import { setTodos, todos } from '../todo/todoData'
 
 export const getItems = ({ accountId }: ApiRequest, reply) => {
   if (!accountId) {
