@@ -5,6 +5,7 @@ import { File, PostFile } from './fileController'
 import { items, setItems } from '../item/itemData'
 import { Item } from '../item/itemController'
 import { setTodos, todos } from '../todo/todoData'
+import { getTodoCount } from '../todo/todoService'
 
 export const getFiles = ({ accountId }: ApiRequest, reply) => {
   if (!accountId) {
@@ -13,7 +14,7 @@ export const getFiles = ({ accountId }: ApiRequest, reply) => {
   }
   const clean = files
     .filter((file) => file.accountId === accountId)
-    .map(({ id, name, content, items }) => ({ id, name, itemCount: items ? items.length : 0 }))
+    .map(({ id, name, items }) => ({ id, name, itemCount: items ? items.length : 0 }))
   reply.send(clean)
 }
 export const getFile = ({ accountId, params }: ApiRequest, reply) => {
@@ -44,7 +45,11 @@ export const postFile = ({ accountId, ...req }, reply) => {
   }
   const newFile = req.body as PostFile
   const id = v4()
-  const file = { id, accountId, ...newFile }
+
+  const fileNames = files.map((f) => f.name)
+  const name = chooseFreeName(newFile.name, fileNames)
+
+  const file = { id, accountId, ...newFile, name }
 
   const newItems: Item[] | undefined = file.items?.map(({ title, content, level, ...newItem }) => {
     const itemId = v4()
@@ -72,7 +77,7 @@ export const postFile = ({ accountId, ...req }, reply) => {
   const fileWithItemIds: File = { ...file, items: newItems?.map((i) => i.id) }
 
   setFiles([...files, fileWithItemIds])
-  reply.send({ id, ...newFile })
+  reply.send({ id, ...newFile, name })
 }
 
 export const putFile = ({ accountId, params, ...req }: ApiRequest, reply) => {
@@ -113,6 +118,26 @@ export const getFileItems = ({ accountId, params }: ApiRequest, reply) => {
     return
   }
   const { items: wanted } = file
-  const fileItems = items.filter((i) => i.accountId === accountId && wanted?.includes(i.id))
+  const fileItems = items
+    .filter((i) => i.accountId === accountId && wanted?.includes(i.id))
+    .map(({ id: itemId, title, content, level, children }) => ({
+      id: itemId,
+      title,
+      content,
+      level,
+      children,
+      todoCount: getTodoCount(accountId, itemId),
+    }))
   reply.send(fileItems)
+}
+function chooseFreeName(name: string, fileNames: string[]) {
+  let tryName = name
+  let count = 1
+  while (true) {
+    if (!fileNames.includes(tryName)) {
+      console.error(fileNames, tryName)
+      return tryName
+    }
+    tryName = `${name}(${count++})`
+  }
 }

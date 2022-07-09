@@ -24,10 +24,13 @@ redusers written in same style as react context, no slices...
 - x redux for state and api requests
 - x parse md-file
 - x import md-file
-- x save md files (could use date)
-- improve design
+- x save md files into db
+- x improve design
+- x add storybook
 - clean up components, add hooks etc.
-- add storybook
+- add items / todos from UI
+- drag and drop reorder
+- export markdown
 
 # markdown parser
 

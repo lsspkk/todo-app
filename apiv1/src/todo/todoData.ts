@@ -13,12 +13,12 @@ let data: Todo[] = [
   { id: '71', accountId: '1', itemId: '7', done: true, title: 'Create React App, with components', content: '' },
   { id: '72', accountId: '1', itemId: '7', done: true, title: 'Add simple login, user into redux', content: '' },
   { id: '73', accountId: '1', itemId: '7', done: true, title: 'Add redux to hold some items', content: '' },
-  { id: '74', accountId: '1', itemId: '7', done: false, title: 'Add get post put items to redux', content: '' },
-  { id: '75', accountId: '1', itemId: '7', done: false, title: 'Redux, get post todos', content: '' },
-  { id: '81', accountId: '1', itemId: '8', done: false, title: 'Read file content', content: '' },
-  { id: '82', accountId: '1', itemId: '8', done: false, title: 'Get post files with redux', content: '' },
-  { id: '91', accountId: '1', itemId: '9', done: false, title: 'Parse titles as items', content: '' },
-  { id: '92', accountId: '1', itemId: '9', done: false, title: 'Parse lists into todos', content: '' },
+  { id: '74', accountId: '1', itemId: '7', done: true, title: 'Add get post put items to redux', content: '' },
+  { id: '75', accountId: '1', itemId: '7', done: true, title: 'Redux, get post todos', content: '' },
+  { id: '81', accountId: '1', itemId: '8', done: true, title: 'Read file content', content: '' },
+  { id: '82', accountId: '1', itemId: '8', done: true, title: 'Get post files with redux', content: '' },
+  { id: '91', accountId: '1', itemId: '9', done: true, title: 'Parse titles as items', content: '' },
+  { id: '92', accountId: '1', itemId: '9', done: true, title: 'Parse lists into todos', content: '' },
 ]
 
 export const setTodos = (newData) => (data = newData)

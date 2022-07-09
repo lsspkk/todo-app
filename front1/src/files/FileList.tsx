@@ -1,3 +1,4 @@
+import { FolderIcon } from '@heroicons/react/outline'
 import { File } from 'api/apiTypes'
 import Button from 'components/Button'
 
@@ -11,15 +12,14 @@ export function FileList({
   return (
     <div className='mt-6'>
       {files.map(({ id, name, items }) => (
-        <div key={`simpleFileList.${id}`} className='flex justify-between sm:grid sm:grid-cols-3  items-center'>
+        <button
+          key={`simpleFileList.${id}`}
+          onClick={() => handleLoadItems(id)}
+          className='flex content-start items-center mb-1'
+        >
+          <FolderIcon className='w-4 mr-2' />
           <h3>{name}</h3>
-          <Button
-            onClick={() => handleLoadItems(id)}
-            className='bg-indigo-200 text-black hover:bg-indigo-300 w-20 mb-2'
-          >
-            Lataa
-          </Button>
-        </div>
+        </button>
       ))}
     </div>
   )

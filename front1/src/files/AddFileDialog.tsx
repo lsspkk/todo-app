@@ -25,23 +25,25 @@ export function AddFileDialog({ saveFile, hideAdd }: AddFileDialogProps) {
 
   return (
     <div>
-      <div className='flex gap-8 items-center mt-8'>
-        <div className='w-4/6 flex'>
+      <div className='flex gap-8 items-center mt-8 content-between'>
+        <div className='w-full sm:w-3/6 flex'>
           <h3 className='text-lg leading-6 font-medium pr-4'>Lue MarkDown Tiedosto</h3>
           <input type='file' accept='.md' onChange={handleChange} />
         </div>
-        <Button
-          className='w-1/6 bg-transparent text-gray-700 border-2 border-gray-500 hover:bg-gray-200'
-          onClick={hideAdd}
-        >
-          Peruuta
-        </Button>
-        <Button
-          className={`w-1/6 ${items ? 'bg-indigo-900' : 'bg-gray-500'}`}
-          onClick={() => newFile && saveFile(newFile)}
-        >
-          Tallenna
-        </Button>
+        <div className='w-full sm:w-2/6 flex'>
+          <Button
+            className='w-1/2 mr-2  bg-transparent text-gray-700 border-2 border-gray-500 hover:bg-gray-200'
+            onClick={hideAdd}
+          >
+            Peruuta
+          </Button>
+          <Button
+            className={`w-1/2   ${items ? 'bg-indigo-900' : 'bg-gray-500'}`}
+            onClick={() => newFile && saveFile(newFile)}
+          >
+            Tuo
+          </Button>
+        </div>
       </div>
       {newFile && items && (
         <div>

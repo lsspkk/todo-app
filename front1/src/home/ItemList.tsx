@@ -35,7 +35,7 @@ export function ItemList({
           const bg = i % 2 ? 'bg-white' : 'bg-gray-50'
           const showToggle = todoCount !== undefined && todoCount > 0
           return (
-            <div key={`item-${itemId}`} className={` pl-${Number(level) * 2} `}>
+            <div key={`item-${itemId}`} style={{ paddingLeft: `${Number(level) * 1}rem` }}>
               <button
                 onClick={() => showToggle && handleShowTodos(itemId)}
                 className={`${bg} px-4 pt-5 flex gap-4 w-full content-between text-left`}

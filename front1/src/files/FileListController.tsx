@@ -1,3 +1,4 @@
+import { FolderAddIcon } from '@heroicons/react/outline'
 import { NewFile } from 'api/apiTypes'
 import Button from 'components/Button'
 import Error from 'components/Error'
@@ -48,11 +49,13 @@ export function FileListController() {
           <div className='w-5/6 bg-gray-50 text-sm font-medium text-gray-500'>Tiedostoja yhteensä:{files.length}</div>
           <div className='w-1/6'>
             {!showAdd && (
-              <>
-                <Button className='bg-indigo-200 text-black hover:bg-indigo-300' onClick={() => setShowAdd(true)}>
-                  Lue
-                </Button>
-              </>
+              <Button
+                className='w-auto bg-indigo-200 text-black hover:bg-indigo-300 float-right'
+                onClick={() => setShowAdd(true)}
+              >
+                <FolderAddIcon className='w-4 mr-1' />
+                Tuo
+              </Button>
             )}
           </div>
         </div>
