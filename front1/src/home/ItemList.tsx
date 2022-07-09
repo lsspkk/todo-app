@@ -1,5 +1,4 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline'
-import { PaperClipIcon } from '@heroicons/react/solid'
 import CheckBox from 'components/Checkbox'
 import { useState } from 'react'
 import { Item, NewItem, NewTodo, Todo } from '../api/apiTypes'

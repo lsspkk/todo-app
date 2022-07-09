@@ -2,8 +2,8 @@
 
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
-import { ItemList, TodoList } from './ItemList'
-import { Item, NewTodo, Todo } from 'api/apiTypes'
+import { ItemList } from './ItemList'
+import { Item, Todo } from 'api/apiTypes'
 
 export default { component: ItemList } as ComponentMeta<typeof ItemList>
 
