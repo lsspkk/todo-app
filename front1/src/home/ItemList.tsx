@@ -1,5 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline'
 import { PaperClipIcon } from '@heroicons/react/solid'
+import CheckBox from 'components/Checkbox'
 import { useState } from 'react'
 import { Item, NewItem, NewTodo, Todo } from '../api/apiTypes'
 
@@ -33,22 +34,24 @@ export function ItemList({
           const todos = 'todos' in item ? item.todos : 'newTodos' in item ? item.newTodos : []
           const todoCount = 'todoCount' in item ? item.todoCount : todos?.length
           const bg = i % 2 ? 'bg-white' : 'bg-gray-50'
+          const showToggle = todoCount !== undefined && todoCount > 0
           return (
             <div key={`item-${itemId}`} className={` pl-${Number(level) * 2} `}>
-              <div className={`${bg} px-4 pt-5 flex gap-4`}>
-                <dt className={`text-sm font-medium text-gray-500 w-3/4`}>{title}</dt>
-                {todoCount !== undefined && todoCount > 0 && (
-                  <div className='mt-1 text-sm text-gray-900'>
-                    <button onClick={() => handleShowTodos(itemId)}>
-                      {showTodos.includes(itemId) ? (
-                        <ChevronUpIcon className='h-4 w-4' />
-                      ) : (
-                        <ChevronDownIcon className='h-4 w-4' />
-                      )}
-                    </button>
+              <button
+                onClick={() => showToggle && handleShowTodos(itemId)}
+                className={`${bg} px-4 pt-5 flex gap-4 w-full content-between text-left`}
+              >
+                <dt className={`text-sm font-medium text-gray-500 w-5/6`}>{title}</dt>
+                {showToggle && (
+                  <div className='mt-1 text-sm text-gray-900 text-end'>
+                    {showTodos.includes(itemId) ? (
+                      <ChevronUpIcon className='h-4 w-4' />
+                    ) : (
+                      <ChevronDownIcon className='h-4 w-4' />
+                    )}
                   </div>
                 )}
-              </div>
+              </button>
               <dt className='pl-4 text-sm font-medium text-gray-500'>{content}</dt>
 
               {showTodos.includes(itemId) && todos && <TodoList {...{ itemId, todos, handleDoneClicked }} />}
@@ -83,9 +86,10 @@ export function TodoList({
                 disabled={!isTodo}
                 onClick={() => isTodo && handleDoneClicked && handleDoneClicked(itemId, todo)}
               >
-                <PaperClipIcon
+                <CheckBox
                   className={`flex-shrink-0 h-3 w-3 ${todo.done ? 'text-green-900' : 'text-gray-400'}`}
                   aria-hidden='true'
+                  checked={todo.done}
                 />
                 <span className='ml-2 truncate text-align-left'>{todo.title}</span>
               </button>
