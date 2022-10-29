@@ -45,7 +45,7 @@ fastify.register(secureSession, {
   },
 })
 
-const allowedOrigin = !process.env.CORS_ALLOWED_ORIGIN ? 'http://localhost:3000' : process.env.CORS_ALLOWED_ORIGIN
+const allowedOrigin = !process.env.CORS_ALLOWED_ORIGIN ? 'http://localhost:5173' : process.env.CORS_ALLOWED_ORIGIN
 fastify.register(require('fastify-cors'), {
   origin: [allowedOrigin],
   allowedHeaders: [

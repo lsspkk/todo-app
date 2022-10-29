@@ -49,7 +49,7 @@ export default function SignUpForm({
               </div>
               <div>
                 <label htmlFor='password' className='sr-only'>
-                  Salasan
+                  Salasana
                 </label>
                 <input
                   id='password'

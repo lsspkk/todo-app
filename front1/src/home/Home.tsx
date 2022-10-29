@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import './Home.css'
-import MainMenu from '../components/Menu'
+import MainMenuContainer from '../components/MainMenu'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from 'store/hooks'
 import { UserAccount } from 'api/apiTypes'
-import { ItemListController } from './ItemListController'
-import { FileListController } from 'files/FileListController'
+import { ItemListContainer } from './ItemListContainer'
+import { FileListContainer } from 'files/FileListContainer'
 
 function Home() {
   const navigate = useNavigate()
@@ -28,11 +28,11 @@ function Home() {
 
   return (
     <div>
-      <MainMenu />
+      <MainMenuContainer />
       <div className='max-w-7xl mx-auto'>
         <Routes>
-          <Route path='/files' element={<FileListController />}></Route>
-          <Route path='/' element={<ItemListController />}></Route>
+          <Route path='/files' element={<FileListContainer />}></Route>
+          <Route path='/' element={<ItemListContainer />}></Route>
         </Routes>
       </div>
     </div>

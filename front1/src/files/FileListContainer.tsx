@@ -10,7 +10,7 @@ import { loadFileItemList } from 'store/itemsReducer'
 import { AddFileDialog } from './AddFileDialog'
 import { FileList } from './FileList'
 
-export function FileListController() {
+export function FileListContainer() {
   const [showAdd, setShowAdd] = useState(false)
   const dispatch = useAppDispatch()
   const { files } = useAppSelector((state) => state.files)

@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { loadItem, loadItemList, updateItemTodo } from '../store/itemsReducer'
 import { ItemList } from './ItemList'
 
-export function ItemListController() {
+export function ItemListContainer() {
   const { items, currentFile } = useAppSelector((state) => ({
     items: state.items.items,
     currentFile: state.files.currentFile,

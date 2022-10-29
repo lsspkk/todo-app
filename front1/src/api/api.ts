@@ -1,7 +1,7 @@
 import { TodoItemUpdate } from 'store/itemsReducer'
 import { File, Item, NewFile, Todo, UserAccount } from './apiTypes'
 
-const apiUrl = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : 'http://localhost:5000'
+const apiUrl = import.meta.env.REACT_APP_API_URL ? import.meta.env.REACT_APP_API_URL : 'http://localhost:5000'
 
 export interface LoginBody {
   username: string

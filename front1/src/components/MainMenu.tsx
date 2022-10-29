@@ -17,16 +17,15 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function MainMenu() {
-  const { username } = useAppSelector((state) => state.user)
-  const navigate = useNavigate()
-  async function handleLogout() {
-    const action = await userLogout()
-    store.dispatch(action)
-    navigate('/login')
-  }
-  const pathname = useLocation().pathname
-
+export function MainMenu({
+  pathname,
+  username,
+  handleLogout,
+}: {
+  pathname: String
+  username: String
+  handleLogout: () => void
+}) {
   return (
     <Disclosure as='nav' className='bg-gray-800'>
       {({ open }) => (
@@ -165,4 +164,17 @@ export default function MainMenu() {
       )}
     </Disclosure>
   )
+}
+
+export default function MainMenuContainer() {
+  const { username } = useAppSelector((state) => state.user)
+  const navigate = useNavigate()
+  async function handleLogout() {
+    const action = await userLogout()
+    store.dispatch(action)
+    navigate('/login')
+  }
+  const pathname = useLocation().pathname
+
+  return <MainMenu {...{ username, handleLogout, pathname }} />
 }
