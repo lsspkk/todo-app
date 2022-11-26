@@ -5,6 +5,10 @@ import { useState } from 'react'
 import { Item, NewItem, NewTodo, Todo } from '../api/apiTypes'
 import { EditItemTodoDialog } from './EditItemTodoDialog'
 
+function bgColor(level: number) {
+  return level === 0 ? 'bg-gray-200' : level === 1 ? 'bg-gray-100' : level === 2 ? 'bg-gray-50' : 'bg-white'
+}
+
 export function ItemList({
   items,
   handleLoadItem,
@@ -42,30 +46,21 @@ export function ItemList({
       <dl>
         {items.map((item, i) => {
           const { title, content, level } = item
-          const itemId = 'id' in item ? item.id : `title.${i}`
+          const itemId = 'id' in item ? item.id : `title.${title}.${i}`
           const todos = 'todos' in item ? item.todos : 'newTodos' in item ? item.newTodos : []
           const todoCount = 'todoCount' in item ? item.todoCount : todos?.length
-          const bg =
-            level === 0
-              ? 'bg-gray-200'
-              : level === 1
-              ? 'bg-gray-100'
-              : level === 2
-              ? 'bg-gray-50'
-              : i % 2 === 0
-              ? 'bg-white'
-              : 'bg-gray-50'
 
           const showToggle = todoCount !== undefined && todoCount > 0
           return (
-            <div key={`item-${itemId}`} style={{ paddingLeft: `${Number(level) * 1}rem` }}>
+            <div key={`item-${itemId}`}>
               <div
-                className={`${bg} px-4 py-2 flex gap-4 w-full items-center justify-between text-left text-sm text-gray-900`}
+                className={`${bgColor(
+                  level
+                )} px-4 py-2 flex gap-4 w-full items-center justify-between text-left text-sm text-gray-900`}
               >
                 {showToggle && (
-                  <button className='flex gap-2 items-center' onClick={() => showToggle && handleShowTodos(itemId)}>
-                    <dt className={`text-sm font-medium text-gray-500`}>{title}</dt>
-
+                  <button className='flex gap-2 items-center' onClick={() => handleShowTodos(itemId)}>
+                    <TodoTitle {...{ item }} />
                     {showTodos.includes(itemId) ? (
                       <ChevronUpIcon className='h-4 w-4' />
                     ) : (
@@ -73,7 +68,7 @@ export function ItemList({
                     )}
                   </button>
                 )}
-                {!showToggle && <dt className={`text-sm font-medium text-gray-500`}>{title}</dt>}
+                {!showToggle && <TodoTitle {...{ item }} />}
                 <PencilAltIcon className='h-4 w-4 opacity-30' onClick={() => handleEditClicked(item)} />
               </div>
               <dt className='pl-4 text-sm font-medium text-gray-500'>{content}</dt>
@@ -93,6 +88,14 @@ export function ItemList({
         })}
       </dl>
     </div>
+  )
+}
+
+function TodoTitle({ item }: { item: Item | NewItem }) {
+  return item.level < 1 ? (
+    <dt className={`text-sm font-medium text-gray-800`}>{item.title}</dt>
+  ) : (
+    <dt className={`text-sm font-medium text-gray-500`}>{item.title}</dt>
   )
 }
 
