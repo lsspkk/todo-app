@@ -1,7 +1,7 @@
-import { ChevronDownIcon, ChevronUpIcon, PencilAltIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon, ChevronUpIcon, XCircleIcon } from '@heroicons/react/outline'
 import CheckBox from 'components/Checkbox'
 import { string } from 'prop-types'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Item, Todo } from '../api/apiTypes'
 import { EditItemTodoDialog } from './EditItemTodoDialog'
 
@@ -19,7 +19,6 @@ export function ItemList({
   handleDoneClicked: (itemId: string, todo: Todo) => void
 }) {
   const [showTodos, setShowTodos] = useState<string[]>([])
-  const [editItemTodo, setEditItemTodo] = useState<{ item?: Item; todo?: Todo }>({})
 
   async function handleShowTodos(itemId: string) {
     if (!showTodos.includes(itemId)) {
@@ -32,70 +31,124 @@ export function ItemList({
     }
   }
 
-  const handleEditClicked = (item: Item, todo?: Todo) => {
-    setEditItemTodo({ item, todo })
-  }
-
-  if (editItemTodo.item !== undefined) {
-    const { item, todo } = editItemTodo
-    return <EditItemTodoDialog {...{ items, item, todo, onClose: () => setEditItemTodo({}) }} />
-  }
-
   return (
     <div className='border-t border-gray-200 w-full'>
       <dl>
-        {items.map((item, i) => {
-          const { title, content, level } = item
-          const itemId = item.id
-          const todos = item.todos || []
-          const todoCount = 'todoCount' in item ? item.todoCount : todos?.length
-
-          const showToggle = todoCount !== undefined && todoCount > 0
-          return (
-            <div key={`item-${itemId}`}>
-              <div
-                className={`${bgColor(
-                  level
-                )} px-4 py-2 flex gap-4 w-full items-center justify-between text-left text-sm text-gray-900`}
-              >
-                {showToggle && (
-                  <button className='flex gap-2 items-center' onClick={() => handleShowTodos(itemId)}>
-                    <TodoTitle {...{ item }} />
-                    {showTodos.includes(itemId) ? (
-                      <ChevronUpIcon className='h-4 w-4' />
-                    ) : (
-                      <ChevronDownIcon className='h-4 w-4' />
-                    )}
-                  </button>
-                )}
-                {!showToggle && <TodoTitle {...{ item }} />}
-                <PencilAltIcon className='h-4 w-4 opacity-30' onClick={() => handleEditClicked(item)} />
-              </div>
-              <dt className='pl-4 text-sm font-medium text-gray-500'>{content}</dt>
-
-              {showTodos.includes(itemId) && todos && (
-                <TodoList
-                  {...{
-                    itemId,
-                    todos,
-                    handleDoneClicked,
-                    handleEditTodoClicked: (todo) => handleEditClicked(item, todo),
-                  }}
-                />
-              )}
-            </div>
-          )
-        })}
+        {items.map((item) => (
+          <ItemRow key={item.id} {...{ item, showTodos, handleShowTodos, handleDoneClicked }} />
+        ))}
       </dl>
     </div>
   )
 }
 
-function TodoTitle({ item }: { item: Item }) {
+function ItemRow({
+  item,
+  showTodos,
+  handleShowTodos,
+  handleDoneClicked,
+}: {
+  item: Item
+  handleDoneClicked: (itemId: string, todo: Todo) => void
+  showTodos: string[]
+  handleShowTodos: (itemId: string) => void
+}) {
+  const { content, level } = item
+  const itemId = item.id
+  const todos = item.todos || []
+  const todoCount = 'todoCount' in item ? item.todoCount : todos?.length
+
+  const showToggle = todoCount !== undefined && todoCount > 0
+
+  const [mode, setMode] = useState({ edit: false })
+
+  const onChange = (newTitle: string) => {
+    console.debug(newTitle)
+    setMode({ edit: false })
+  }
+
+  return (
+    <div key={`item-${itemId}`}>
+      <div
+        className={`${bgColor(
+          level
+        )} px-4 py-2 flex gap-4 w-full items-center justify-between text-left text-sm text-gray-900`}
+      >
+        {mode.edit && <EditTitle {...{ title: item.title, onChange, onClose: () => setMode({ edit: false }) }} />}
+        {!mode.edit && (
+          <div onClick={() => setMode({ edit: true })}>
+            <TodoTitle {...{ item }} />
+          </div>
+        )}
+        {showToggle && (
+          <button className='flex gap-2 items-center' onClick={() => handleShowTodos(itemId)}>
+            {showTodos.includes(itemId) ? (
+              <ChevronUpIcon className='h-4 w-4' />
+            ) : (
+              <ChevronDownIcon className='h-4 w-4' />
+            )}
+          </button>
+        )}
+      </div>
+      <dt className='pl-4 text-sm font-medium text-gray-500'>{content}</dt>
+
+      {showTodos.includes(itemId) && todos && (
+        <TodoList
+          {...{
+            itemId,
+            todos,
+            handleDoneClicked,
+          }}
+        />
+      )}
+    </div>
+  )
+}
+
+function TodoTitle({ item, ...props }: { item: Item }) {
   return item.level < 1 ? (
-    <dt className={`text-sm font-medium text-gray-800`}>{item.title}</dt>
+    <dt className={`text-sm font-medium text-gray-800`} {...props}>
+      {item.title}
+    </dt>
   ) : (
-    <dt className={`text-sm font-medium text-gray-500`}>{item.title}</dt>
+    <dt className={`text-sm font-medium text-gray-500`} {...props}>
+      {item.title}
+    </dt>
+  )
+}
+
+function EditTitle({
+  title,
+  onChange,
+  onClose,
+}: {
+  title: string
+  onChange: (newTitle: string) => void
+  onClose: () => void
+}) {
+  const [value, setValue] = useState(title)
+
+  return (
+    <div className='flex items-center justify-between w-full'>
+      <div onClick={onClose} className='absolute top-0 left-0 w-full h-full bg-gray-200 opacity-75'></div>
+      <input
+        id='username'
+        name='username'
+        type='username'
+        autoComplete='username'
+        required
+        className='appearance-none rounded-none relative block w-auto p-1 m:[-2px] border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm'
+        placeholder='käyttäjätunnus'
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <div className='flex items-center z-10 gap-4'>
+        <button onClick={() => onChange(value)}>OK</button>
+        <button className='h-6 w-6' onClick={onClose}>
+          <XCircleIcon />
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -103,12 +156,10 @@ export function TodoList({
   itemId,
   todos,
   handleDoneClicked,
-  handleEditTodoClicked,
 }: {
   itemId: string
   todos: Todo[]
   handleDoneClicked: (itemId: string, todo: Todo) => void
-  handleEditTodoClicked: (todo?: Todo) => void
 }) {
   return (
     <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>
@@ -133,7 +184,6 @@ export function TodoList({
                 </button>
                 <div className='ml-4 flex-shrink-0'>{todo.content}</div>
               </div>
-              <PencilAltIcon className='h-4 w-4 opacity-30' onClick={() => handleEditTodoClicked(todo)} />
             </li>
           )
         })}
