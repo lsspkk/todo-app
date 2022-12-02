@@ -1,7 +1,7 @@
 import { items, setItems } from './itemData'
 import { v4 } from 'uuid'
 import { ApiRequest } from 'server'
-import { Item, PostItem } from './itemController'
+import { Item } from './itemController'
 import { getCleanTodos, getTodoCount } from '../todo/todoService'
 import { setTodos, todos } from '../todo/todoData'
 
@@ -44,10 +44,10 @@ export const postItem = ({ accountId, ...req }, reply) => {
     reply.code(403).send()
     return
   }
-  const newItem = req.body as PostItem
+  const newItem = req.body as Item
   const itemId = v4()
 
-  const newTodos = newItem.newTodos?.map(({ content, done, title }) => ({
+  const newTodos = newItem.todos?.map(({ content, done, title }) => ({
     id: v4(),
     itemId,
     accountId,

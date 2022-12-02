@@ -16,3 +16,5 @@ https://storybook.js.org/docs/react/writing-stories/introduction
 # Muuta
 
 Vaihdettu VITE webpackin ja create-react-appin tilalle
+
+Vaatii nodejs 16

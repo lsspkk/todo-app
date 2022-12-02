@@ -10,7 +10,7 @@ export function FileList({
   handleLoadItems(fileId: string): Promise<void>
 }) {
   return (
-    <div className='mt-6'>
+    <div className='m-4'>
       {files.map(({ id, name, items }) => (
         <button
           key={`simpleFileList.${id}`}

@@ -1,7 +1,7 @@
 import { todos, setTodos } from './todoData'
 import { v4 } from 'uuid'
 import { ApiRequest } from 'server'
-import { PostTodo, Todo } from './todoController'
+import { Todo } from './todoController'
 
 export const getTodos = ({ accountId, params }: ApiRequest, reply) => {
   if (!accountId) {
@@ -47,7 +47,7 @@ export const postTodo = ({ accountId, ...req }, reply) => {
     reply.code(403).send()
     return
   }
-  const newTodo = req.body as PostTodo
+  const newTodo = req.body as Todo
   const id = v4()
   const todo = { id, accountId, ...newTodo }
   setTodos([...todos, todo])

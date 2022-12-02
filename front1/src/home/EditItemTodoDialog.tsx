@@ -2,7 +2,7 @@ import { XCircleIcon } from '@heroicons/react/outline'
 import CheckBox from 'components/Checkbox'
 import { string } from 'prop-types'
 import { useState } from 'react'
-import { Item, NewItem, NewTodo, Todo } from '../api/apiTypes'
+import { Item, Todo } from '../api/apiTypes'
 
 export function EditItemTodoDialog({
   items,
@@ -10,9 +10,9 @@ export function EditItemTodoDialog({
   todo,
   onClose,
 }: {
-  items: Item[] | NewItem[]
-  item: Item | NewItem
-  todo?: Todo | NewTodo
+  items: Item[]
+  item: Item
+  todo?: Todo
   onClose: () => void
 }) {
   return (

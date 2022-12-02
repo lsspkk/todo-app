@@ -1,4 +1,5 @@
-import { NewItem, NewTodo } from 'api/apiTypes'
+import { Item, Todo } from 'api/apiTypes'
+import { v4 as uuidv4 } from 'uuid'
 
 /**
  * Simple, kind of statemachine parser,
@@ -28,38 +29,46 @@ import { NewItem, NewTodo } from 'api/apiTypes'
  *
  * Item 1 children:  Item 2 - level 3, Item 3 - level 2.
  */
-export function markdownParse(fileContent: string): NewItem[] {
-  const items: NewItem[] = []
+
+const emptyItem = (level: number): Item => {
+  const id = uuidv4()
+  return { id, content: '', title: 'no title', level, todos: [], children: [], isSavedInDatabase: false }
+}
+
+const emptyTodo = (level: number): Todo => {
+  const id = uuidv4()
+  return { id, itemId: '', done: false, title: 'no title', content: '', isSavedInDatabase: false }
+}
+
+export function markdownParse(fileContent: string): Item[] {
+  const items: Item[] = []
 
   const lines = fileContent.split('\n')
   if (lines.length === 0) throw new Error('Content has no lines')
 
   let level = 0
-  const emptyItem = { content: '', title: 'no title', level, newTodos: [], children: [] }
-  const emptyTodo: NewTodo = { done: false, title: 'no title', content: '' }
-
   // state machine variables
-  let item: NewItem = { ...emptyItem }
-  let todo: NewTodo = { ...emptyTodo }
-  let parentOne: NewItem | null = null
-  let parentTwo: NewItem | null = null
+  let item: Item = { ...emptyItem(level) }
+  let todo: Todo = { ...emptyTodo(level) }
+  let parentOne: Item | null = null
+  let parentTwo: Item | null = null
 
   function hasReadTodo() {
-    return todo.title !== emptyTodo.title
+    return todo.title !== 'no title'
   }
   function hasReadItem() {
-    return item.title !== emptyItem.title
+    return item.title !== 'no title'
   }
   function saveReadTodo() {
     if (hasReadTodo()) {
-      item.newTodos.push(todo)
-      todo = { ...emptyTodo }
+      item.todos?.push(todo)
+      todo = { ...emptyTodo(level) }
     }
   }
   function saveReadItem() {
     if (hasReadItem()) {
       items.push(item)
-      item = { ...emptyItem, newTodos: [], children: [] }
+      item = { ...emptyItem(level) }
     }
   }
 
@@ -95,6 +104,7 @@ export function markdownParse(fileContent: string): NewItem[] {
       saveReadTodo()
       todo.done = line.startsWith('- x ')
       todo.title = line.substring(todo.done ? 4 : 2)
+      todo.itemId = item.id
       return
     }
 
@@ -105,7 +115,7 @@ export function markdownParse(fileContent: string): NewItem[] {
     }
   })
   if (hasReadTodo()) {
-    item.newTodos.push(todo)
+    item.todos?.push(todo)
   }
   if (hasReadItem()) {
     items.push(item)

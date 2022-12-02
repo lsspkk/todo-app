@@ -23,24 +23,9 @@ export const todoSchema = S.object()
 
 export const todosSchema = S.array().items(todoSchema)
 
-export interface PostTodo {
-  title: string
-  content: string
-  level: number
-  children?: string[] // todoIds
-  done?: boolean
-}
-
-export const postTodoSchema = S.object()
-  .prop('title', S.string())
-  .required()
-  .prop('content', S.string())
-  .required()
-  .prop('done', S.boolean())
-
 export function todoRoutes(fastify, options, done) {
   fastify.get('/items/:itemId/todos', { schema: todosSchema }, getTodos)
-  fastify.post('/items/:itemId/todos', { body: postTodoSchema, schema: todoSchema }, postTodo)
+  fastify.post('/items/:itemId/todos', { body: todoSchema, schema: todoSchema }, postTodo)
   fastify.put('/items/:itemId/todos/:id', { body: todoSchema, schema: todoSchema }, putTodo)
   fastify.delete('/items/:itemId/todos/:id', {}, deleteTodo)
   fastify.get('/items/:itemId/todos/:id', { schema: todoSchema }, getTodo)

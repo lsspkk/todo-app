@@ -53,7 +53,7 @@ export const postFile = ({ accountId, ...req }, reply) => {
 
   const newItems: Item[] | undefined = file.items?.map(({ title, content, level, ...newItem }) => {
     const itemId = v4()
-    const todos = newItem.newTodos?.map(({ content, done, title }) => ({
+    const todos = newItem.todos?.map(({ content, done, title }) => ({
       id: v4(),
       itemId,
       accountId,

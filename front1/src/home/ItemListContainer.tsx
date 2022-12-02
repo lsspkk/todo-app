@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Item, Todo } from '../api/apiTypes'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { loadItem, loadItemList, updateItemTodo } from '../store/itemsReducer'
+import { loadItem, loadItemList, updateItemTodo, updateTodoValue } from '../store/itemsReducer'
 import { ItemList } from './ItemList'
 
 export function ItemListContainer() {
@@ -20,7 +20,12 @@ export function ItemListContainer() {
   }
 
   function handleDoneClicked(itemId: string, todo: Todo) {
-    dispatch(updateItemTodo({ itemId, todo: { ...todo, done: !todo.done } }))
+    const newTodo: Todo = { ...todo, done: !todo.done }
+    if (todo.isSavedInDatabase === false) {
+      dispatch(updateTodoValue({ itemId, todo: newTodo }))
+    } else {
+      dispatch(updateItemTodo({ itemId, todo: newTodo }))
+    }
   }
 
   // todo sort as tree using children
@@ -55,15 +60,11 @@ export function ItemListContainer() {
 
   return (
     <div className='bg-white shadow overflow-hidden sm:rounded-lg'>
-      <div className='px-4 py-5'>
+      <div className='px-4 py-2 flex items-center gap-8'>
         <h3 className='text-lg leading-6 font-medium text-gray-900'>Tehtävät</h3>
         <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
-          <p className='mt-1 max-w-2xl text-sm text-gray-500'>
-            Ladattu tiedosto: {currentFile ? currentFile.name : '-'}
-          </p>
-          <div className='bg-gray-50 text-sm font-medium text-gray-500'>
-            Tehtäviä yhteensä: {items ? items.length : 0}
-          </div>
+          <p className='mt-1 max-w-2xl text-sm text-gray-500'>Tiedosto: {currentFile ? currentFile.name : '-'}</p>
+          <div className='bg-gray-50 text-sm text-gray-500'>Tehtäviä: {items ? items.length : 0}</div>
         </div>
       </div>
       <ItemList {...{ items: families, handleLoadItem, handleDoneClicked }} />

@@ -7,33 +7,30 @@ export interface UserAccount {
   username: string
 }
 
-export interface NewItem {
+export interface Item {
+  id: string
   title: string
   content: string
   level: number
   children?: string[] // itemIds
   todoCount?: number
-  newTodos: NewTodo[]
-}
-export interface Item extends NewItem {
-  id: string
+  isSavedInDatabase?: boolean
   todos?: Todo[]
 }
 
-export interface NewTodo {
+export interface Todo {
+  id: string
+  itemId: string
   done: boolean
   title: string
   content: string
-}
-export interface Todo extends NewTodo {
-  id: string
-  itemId: string
+  isSavedInDatabase?: boolean
 }
 
 export interface NewFile {
   name: string
   content: string
-  items?: NewItem[]
+  items?: Item[]
 }
 export interface File {
   id: string

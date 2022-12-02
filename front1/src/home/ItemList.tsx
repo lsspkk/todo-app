@@ -2,7 +2,7 @@ import { ChevronDownIcon, ChevronUpIcon, PencilAltIcon } from '@heroicons/react/
 import CheckBox from 'components/Checkbox'
 import { string } from 'prop-types'
 import { useState } from 'react'
-import { Item, NewItem, NewTodo, Todo } from '../api/apiTypes'
+import { Item, Todo } from '../api/apiTypes'
 import { EditItemTodoDialog } from './EditItemTodoDialog'
 
 function bgColor(level: number) {
@@ -15,11 +15,11 @@ export function ItemList({
   handleDoneClicked,
 }: {
   handleLoadItem: (itemId: string) => Promise<void>
-  items: Item[] | NewItem[]
+  items: Item[]
   handleDoneClicked: (itemId: string, todo: Todo) => void
 }) {
   const [showTodos, setShowTodos] = useState<string[]>([])
-  const [editItemTodo, setEditItemTodo] = useState<{ item?: Item | NewItem; todo?: Todo | NewTodo }>({})
+  const [editItemTodo, setEditItemTodo] = useState<{ item?: Item; todo?: Todo }>({})
 
   async function handleShowTodos(itemId: string) {
     if (!showTodos.includes(itemId)) {
@@ -32,7 +32,7 @@ export function ItemList({
     }
   }
 
-  const handleEditClicked = (item: Item | NewItem, todo?: Todo | NewTodo) => {
+  const handleEditClicked = (item: Item, todo?: Todo) => {
     setEditItemTodo({ item, todo })
   }
 
@@ -46,8 +46,8 @@ export function ItemList({
       <dl>
         {items.map((item, i) => {
           const { title, content, level } = item
-          const itemId = 'id' in item ? item.id : `title.${title}.${i}`
-          const todos = 'todos' in item ? item.todos : 'newTodos' in item ? item.newTodos : []
+          const itemId = item.id
+          const todos = item.todos || []
           const todoCount = 'todoCount' in item ? item.todoCount : todos?.length
 
           const showToggle = todoCount !== undefined && todoCount > 0
@@ -91,7 +91,7 @@ export function ItemList({
   )
 }
 
-function TodoTitle({ item }: { item: Item | NewItem }) {
+function TodoTitle({ item }: { item: Item }) {
   return item.level < 1 ? (
     <dt className={`text-sm font-medium text-gray-800`}>{item.title}</dt>
   ) : (
@@ -106,17 +106,15 @@ export function TodoList({
   handleEditTodoClicked,
 }: {
   itemId: string
-  todos: NewTodo[] | Todo[]
+  todos: Todo[]
   handleDoneClicked: (itemId: string, todo: Todo) => void
-  handleEditTodoClicked: (todo?: Todo | NewTodo) => void
+  handleEditTodoClicked: (todo?: Todo) => void
 }) {
   return (
     <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>
       <ul className='divide-y divide-gray-200'>
         {todos?.map((todo, i) => {
-          const isTodo = 'id' in todo && 'itemId' in todo
-
-          const id = `id.${todo.title}.${i}.${itemId}`
+          const id = `id.${todo.id}.${itemId}`
           return (
             <li key={`${itemId}-todo-${id}`} className='pl-4 pr-4 py-1 flex items-center justify-between text-sm'>
               <div>
@@ -129,8 +127,7 @@ export function TodoList({
                     className={`flex-shrink-0 h-3 w-3 ${todo.done ? 'text-blue-900' : 'text-gray-400'}`}
                     aria-hidden='true'
                     checked={todo.done}
-                    onChange={() => isTodo && handleDoneClicked(itemId, todo)}
-                    disabled={!isTodo}
+                    onChange={() => handleDoneClicked(itemId, todo)}
                   />
                   <span className='ml-2 truncate text-align-left'>{todo.title}</span>
                 </button>

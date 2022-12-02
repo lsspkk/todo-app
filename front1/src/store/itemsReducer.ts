@@ -1,4 +1,4 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
+import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { getFileItems, getItem, getItems, putTodo } from '../api/api'
 import { ApiError, Item, Todo } from '../api/apiTypes'
 
@@ -19,22 +19,24 @@ export type ItemsStoreAction =
   | { type: 'getFileItems/fulfilled'; payload: Item[] }
   | { type: 'getItem/fulfilled'; payload: Item }
   | { type: 'putTodo/fulfilled'; payload: TodoItemUpdate }
+  | { type: 'updateTodoValue'; payload: TodoItemUpdate }
 
 export const itemsReducer = (
   state: ItemsStore = initialUserState,
   action: ItemsStoreAction = { type: 'NONE' }
 ): ItemsStore => {
   //console.debug({ action })
-  if (action.type === 'getItems/fulfilled') {
+  const a = action.type
+  if (a === 'getItems/fulfilled') {
     return { ...state, items: action.payload }
   }
-  if (action.type === 'getFileItems/fulfilled') {
+  if (a === 'getFileItems/fulfilled') {
     return { ...state, items: action.payload }
   }
-  if (action.type === 'getItem/fulfilled') {
+  if (a === 'getItem/fulfilled') {
     return { ...state, items: state.items.map((i) => (i.id === action.payload.id ? action.payload : i)) }
   }
-  if (action.type === 'putTodo/fulfilled') {
+  if (a === 'putTodo/fulfilled' || a === 'updateTodoValue') {
     return {
       ...state,
       items: state.items.map((i) =>
@@ -53,6 +55,8 @@ export const updateItemTodo = createAsyncThunk<TodoItemUpdate, TodoItemUpdate, {
   'putTodo',
   async (todo: TodoItemUpdate, thunkApi) => putTodo(todo, thunkApi)
 )
+
+export const updateTodoValue = createAction<TodoItemUpdate>('updateTodoValue')
 
 function doUpdateItemTodo(updatedTodo: Todo, oldTodos?: Todo[]) {
   if (!oldTodos || oldTodos.length === 0) {

@@ -1,6 +1,6 @@
 import { deleteItem, getItem, getItems, postItem, putItem } from './itemService'
 import S from 'fluent-json-schema'
-import { PostTodo, postTodoSchema, Todo, todoSchema } from '../todo/todoController'
+import { Todo, todoSchema } from '../todo/todoController'
 
 export interface Item {
   id: string
@@ -26,29 +26,9 @@ export const itemSchema = S.object()
 
 export const itemsSchema = S.array().items(itemSchema)
 
-export interface PostItem {
-  title: string
-  content: string
-  level: number
-  fileId?: string
-  children?: string[] // itemIds
-  newTodos?: PostTodo[]
-}
-
-export const postItemSchema = S.object()
-  .prop('title', S.string())
-  .required()
-  .prop('content', S.string())
-  .required()
-  .prop('level', S.number())
-  .required()
-  .prop('fileId', S.string())
-  .prop('children', S.array().items(S.string()))
-  .prop('newTodos', S.array().items(postTodoSchema))
-
 export function itemRoutes(fastify, options, done) {
   fastify.get('/items', { schema: itemsSchema }, getItems)
-  fastify.post('/items', { body: postItemSchema, schema: itemSchema }, postItem)
+  fastify.post('/items', { body: itemsSchema, schema: itemSchema }, postItem)
   fastify.put('/items/:id', { body: itemSchema, schema: itemSchema }, putItem)
   fastify.delete('/items/:id', {}, deleteItem)
   fastify.get('/items/:id', { schema: itemSchema }, getItem)
