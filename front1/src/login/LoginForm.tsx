@@ -38,6 +38,7 @@ export default function LoginForm({
                   placeholder='käyttäjätunnus'
                   value={formData.username}
                   onChange={handleChange}
+                  autoFocus
                 />
               </div>
               <div>
