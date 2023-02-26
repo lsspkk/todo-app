@@ -18,3 +18,8 @@ https://storybook.js.org/docs/react/writing-stories/introduction
 Vaihdettu VITE webpackin ja create-react-appin tilalle
 
 Vaatii nodejs 16
+
+
+
+# TODO
+- poista focus kun klikkaa enteriä ja tallettaa item nimen muutokset

@@ -65,6 +65,21 @@ export async function getItem(id: string): Promise<Item> {
   return response.json()
 }
 
+export async function putItem({ item }: Item, thunkApi: any): Promise<Item> {
+  const response = await window.fetch(`${apiUrl}/items/${item.id}`, {
+    method: 'PUT',
+    headers: {
+      'content-type': 'application/json;charset=UTF-8',
+    },
+    credentials: 'include',
+    body: JSON.stringify(item),
+  })
+
+  const data = await response.json()
+  if (!response.ok) return thunkApi.rejectWithValue(data)
+  return data as Item 
+}
+
 export async function putTodo({ itemId, todo }: TodoItemUpdate, thunkApi: any): Promise<TodoItemUpdate> {
   const response = await window.fetch(`${apiUrl}/items/${itemId}/todos/${todo.id}`, {
     method: 'PUT',

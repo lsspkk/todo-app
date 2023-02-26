@@ -2,6 +2,8 @@ import { ChevronDownIcon, ChevronUpIcon, XCircleIcon } from '@heroicons/react/ou
 import CheckBox from 'components/Checkbox'
 import { string } from 'prop-types'
 import React, { useState } from 'react'
+import { useAppDispatch } from 'store/hooks'
+import { updateItem, updateItemTodo } from 'store/itemsReducer'
 import { Item, Todo } from '../api/apiTypes'
 import { EditItemTodoDialog } from './EditItemTodoDialog'
 
@@ -57,15 +59,7 @@ function ItemRow({
   const itemId = item.id
   const todos = item.todos || []
   const todoCount = 'todoCount' in item ? item.todoCount : todos?.length
-
   const showToggle = todoCount !== undefined && todoCount > 0
-
-  const [mode, setMode] = useState({ edit: false })
-
-  const onChange = (newTitle: string) => {
-    console.debug(newTitle)
-    setMode({ edit: false })
-  }
 
   return (
     <div key={`item-${itemId}`}>
@@ -74,12 +68,7 @@ function ItemRow({
           level
         )} px-4 py-2 flex gap-4 w-full items-center justify-between text-left text-sm text-gray-900`}
       >
-        {mode.edit && <EditTitle {...{ title: item.title, onChange, onClose: () => setMode({ edit: false }) }} />}
-        {!mode.edit && (
-          <div onClick={() => setMode({ edit: true })}>
-            <TodoTitle {...{ item }} />
-          </div>
-        )}
+        <EditTitle {...{ item}} />
         {showToggle && (
           <button className='flex gap-2 items-center' onClick={() => handleShowTodos(itemId)}>
             {showTodos.includes(itemId) ? (
@@ -118,40 +107,24 @@ function TodoTitle({ item, ...props }: { item: Item }) {
 }
 
 function EditTitle({
-  title,
-  onChange,
-  onClose,
+  item,
 }: {
-  title: string
-  onChange: (newTitle: string) => void
-  onClose: () => void
+  item: TodoItem
 }) {
-  const [value, setValue] = useState(title)
+  const dispatch = useAppDispatch()
+  const onSubmit = (newTitle: string) => {
+    dispatch(updateItem({ item: {...item, title: newTitle }}))
+  }
 
   return (
-    <div className='flex items-center justify-between w-full'>
-      <div onClick={onClose} className='absolute top-0 left-0 w-full h-full bg-gray-200 opacity-75'></div>
-      <input
-        id='username'
-        name='username'
-        type='username'
-        autoComplete='username'
-        required
-        className='appearance-none rounded-none relative block w-auto p-1 m:[-2px] border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm'
-        placeholder='käyttäjätunnus'
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-      <div className='flex items-center z-10 gap-4'>
-        <button onClick={() => onChange(value)}>OK</button>
-        <button className='h-6 w-6' onClick={onClose}>
-          <XCircleIcon />
-        </button>
-      </div>
-    </div>
+    <TitleEdit {...{
+      name:`item-${item.id}`,
+      title: item.title,
+      onSubmit       
+      }}/>
   )
 }
-
+  
 export function TodoList({
   itemId,
   todos,
@@ -180,7 +153,7 @@ export function TodoList({
                     checked={todo.done}
                     onChange={() => handleDoneClicked(itemId, todo)}
                   />
-                  <span className='ml-2 truncate text-align-left'>{todo.title}</span>
+                  <EditTodoTitle {...{itemId, todo}}/>
                 </button>
                 <div className='ml-4 flex-shrink-0'>{todo.content}</div>
               </div>
@@ -189,5 +162,76 @@ export function TodoList({
         })}
       </ul>
     </dd>
+  )
+}
+
+
+function EditTodoTitle({
+  itemId,
+  todo,
+}: {
+  itemId: String
+  todo: Todo
+}) {
+
+  const dispatch = useAppDispatch()
+  const onSubmit = (newTitle: string) => {
+    dispatch(updateItemTodo({ itemId, todo: {...todo, title: newTitle }}))
+  }
+
+  return (
+    <TitleEdit {...{
+      name:`todo-${todo.id}`,
+      title: todo.title,
+      onSubmit       
+      }}/>
+  )
+}
+
+function TitleEdit(
+{ 
+  name,
+  title,
+  onSubmit,
+}: 
+{
+  name: string
+  title: string
+  onSubmit: (newTitle: string) => void
+}) {
+  const [value, setValue] = useState(title)
+  const [isEdit, setIsEdit] = useState(false)
+
+  const onChange = () => {
+    onSubmit(value)
+    setIsEdit(false)
+  }
+
+  return (
+    <form className='flex items-center justify-between sm:justify-start w-full gap-4'>
+    { isEdit &&     
+      <div onClick={() => setIsEdit(() => '')} className='absolute top-0 left-0 w-full h-full bg-gray-200 opacity-75' style={{zIndex:100}}></div>
+    } 
+    <input
+      style={isEdit ? {zIndex: 101}: {}}
+      id={`id-${name}`}
+      name={`name-${name}`}
+      type='text'
+      className={`appearance-none ${isEdit ? 'bg-white' : 'bg-transparent'} rounded-1 relative block w-auto p-1 m:[-2px] border border-gray-100 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+      placeholder='käyttäjätunnus'
+      value={value}
+      onChange={(e) => isEdit && setValue(e.target.value)}
+      onClick={() => setIsEdit(() => true)}
+    />
+    { isEdit &&
+      <div className='flex items-center gap-4' style={{zIndex:101}}>
+        <button type='submit' onClick={onChange}>OK</button>
+        <button className='h-6 w-6' onClick={() => setIsEdit(() => false)}>
+          <XCircleIcon />
+        </button>
+      </div>
+    }
+  </form>
+
   )
 }

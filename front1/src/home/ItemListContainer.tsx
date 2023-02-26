@@ -62,8 +62,8 @@ export function ItemListContainer() {
     <div className='bg-white shadow overflow-hidden sm:rounded-lg'>
       <div className='px-4 py-2 flex items-center gap-8'>
         <h3 className='text-lg leading-6 font-medium text-gray-900'>Tehtävät</h3>
-        <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
-          <p className='mt-1 max-w-2xl text-sm text-gray-500'>Tiedosto: {currentFile ? currentFile.name : '-'}</p>
+        <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center'>
+          <p className='max-w-2xl text-sm text-gray-500'>Tiedosto: {currentFile ? currentFile.name : '-'}</p>
           <div className='bg-gray-50 text-sm text-gray-500'>Tehtäviä: {items ? items.length : 0}</div>
         </div>
       </div>
