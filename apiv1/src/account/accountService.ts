@@ -33,11 +33,11 @@ interface SignUpDto {
   role?: 'USER' | 'ADMIN'
 }
 
-const invitationCode = process.env.INVITATION_CODE_SECRET
+const invitationCode = process.env.INVITATION_CODE_SECRET?.split(',') || []
 
 export const signUpAccount = async ({ isAdmin, ...req }: ApiRequest, reply) => {
   const body = req.body as SignUpDto
-  if (!isAdmin && body.invitationCode !== invitationCode) {
+  if (!isAdmin && !invitationCode.includes(body.invitationCode)) {
     reply.code(400).send(new Error('Bad invitation code'))
     return
   }

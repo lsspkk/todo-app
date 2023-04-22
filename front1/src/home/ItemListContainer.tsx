@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { PencilAltIcon } from '@heroicons/react/outline'
+import { useEffect, useState } from 'react'
 import { Item, Todo } from '../api/apiTypes'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { loadItem, loadItemList, updateItemTodo, updateTodoValue } from '../store/itemsReducer'
@@ -9,6 +10,7 @@ export function ItemListContainer() {
     items: state.items.items,
     currentFile: state.files.currentFile,
   }))
+  const [editMode, setEditMode] = useState(false)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -60,14 +62,22 @@ export function ItemListContainer() {
 
   return (
     <div className='bg-white shadow overflow-hidden sm:rounded-lg'>
-      <div className='px-4 py-2 flex items-center gap-8'>
-        <h3 className='text-lg leading-6 font-medium text-gray-900'>Tehtävät</h3>
-        <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center'>
-          <p className='max-w-2xl text-sm text-gray-500'>Tiedosto: {currentFile ? currentFile.name : '-'}</p>
-          <div className='bg-gray-50 text-sm text-gray-500'>Tehtäviä: {items ? items.length : 0}</div>
+      <div className='px-4 py-2 flex items-center gap-8 w-full justify-between'>
+        <div className='flex gap-2 items-center'>
+          <h3 className='text-lg leading-6 font-medium text-gray-900'>Tehtävät</h3>
+          <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center'>
+            <p className='max-w-2xl text-sm text-gray-500'>Tiedosto: {currentFile ? currentFile.name : '-'}</p>
+            <div className='bg-gray-50 text-sm text-gray-500'>Tehtäviä: {items ? items.length : 0}</div>
+          </div>
         </div>
+        <button
+          onClick={() => setEditMode(!editMode)}
+          className={`p-1 shadow-sm text-sm flex items-center gap-1 ${editMode ? 'bg-indigo-300' : 'bg-white'}`}
+        >
+          <PencilAltIcon className={`w-6 h-6`} /> <div>Muokkaus</div>
+        </button>
       </div>
-      <ItemList {...{ items: families, handleLoadItem, handleDoneClicked }} />
+      <ItemList {...{ items: families, handleLoadItem, handleDoneClicked, editMode }} />
     </div>
   )
 }

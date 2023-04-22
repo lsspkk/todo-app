@@ -1,25 +1,40 @@
-import { ChevronDownIcon, ChevronUpIcon, XCircleIcon } from '@heroicons/react/outline'
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  TrashIcon,
+  XCircleIcon,
+} from '@heroicons/react/outline'
 import CheckBox from 'components/Checkbox'
-import React, { useRef, useState } from 'react'
+import { ConfirmDialog } from 'components/ConfirmDialog'
+import { object } from 'prop-types'
+import React, { ReactNode, useRef, useState } from 'react'
 import { useAppDispatch } from 'store/hooks'
-import { updateItem, updateItemTodo } from 'store/itemsReducer'
-import { Item, Todo } from '../api/apiTypes'
+import { removeItem, removeTodo, updateItem, updateItemTodo } from 'store/itemsReducer'
+import { Item, Todo, Editable, isItem, isTodo } from '../api/apiTypes'
 import { EditItemTodoDialog } from './EditItemTodoDialog'
 
 function bgColor(level: number) {
   return level === 0 ? 'bg-gray-200' : level === 1 ? 'bg-gray-100' : level === 2 ? 'bg-gray-50' : 'bg-white'
 }
 
+type ActionCommand = 'add' | 'delete' | 'levelUp' | 'levelDown'
+
 export function ItemList({
   items,
   handleLoadItem,
   handleDoneClicked,
+  editMode = false,
 }: {
   handleLoadItem: (itemId: string) => Promise<void>
   items: Item[]
   handleDoneClicked: (itemId: string, todo: Todo) => void
+  editMode: boolean
 }) {
   const [showTodos, setShowTodos] = useState<string[]>([])
+  const dispatch = useAppDispatch()
 
   async function handleShowTodos(itemId: string) {
     if (!showTodos.includes(itemId)) {
@@ -32,13 +47,41 @@ export function ItemList({
     }
   }
 
+  function onAction(editable: Editable, action: ActionCommand) {
+    if (action === 'delete' && isTodo(editable)) {
+      const todo = editable as Todo
+      dispatch(removeTodo(todo))
+    } else if (isItem(editable)) {
+      const item = editable as Item
+      if (action === 'delete') {
+        dispatch(removeItem(editable.id))
+      } else if (action === 'levelUp') {
+        dispatch(updateItem({ ...item, level: item.level - 1 }))
+      } else if (action === 'levelDown') {
+        dispatch(updateItem({ ...item, level: item.level + 1 }))
+      }
+    }
+  }
+
   return (
     <div className='border-t border-gray-200 w-full'>
       <dl>
         {items.map((item) => (
-          <ItemRow key={item.id} {...{ item, showTodos, handleShowTodos, handleDoneClicked }} />
+          <ItemRow key={item.id} {...{ item, showTodos, handleShowTodos, handleDoneClicked, editMode, onAction }} />
         ))}
       </dl>
+    </div>
+  )
+}
+
+function Row({ level, children }: { level: number; children: ReactNode }) {
+  return (
+    <div
+      className={`${bgColor(
+        level
+      )} px-4 py-2 flex gap-4 w-full items-center justify-between text-left text-sm text-gray-900`}
+    >
+      {children}
     </div>
   )
 }
@@ -48,25 +91,25 @@ function ItemRow({
   showTodos,
   handleShowTodos,
   handleDoneClicked,
+  editMode,
+  onAction,
 }: {
   item: Item
   handleDoneClicked: (itemId: string, todo: Todo) => void
   showTodos: string[]
   handleShowTodos: (itemId: string) => void
+  editMode: boolean
+  onAction: (item: Editable, action: ActionCommand) => void
 }) {
   const { content, level } = item
   const itemId = item.id
   const todos = item.todos || []
   const todoCount = 'todoCount' in item ? item.todoCount : todos?.length
-  const showToggle = todoCount !== undefined && todoCount > 0
+  const showToggle = todoCount !== undefined && todoCount > 0 && !editMode
 
   return (
     <div key={`item-${itemId}`}>
-      <div
-        className={`${bgColor(
-          level
-        )} px-4 py-2 flex gap-4 w-full items-center justify-between text-left text-sm text-gray-900`}
-      >
+      <Row level={level}>
         <EditTitle {...{ item }} />
         {showToggle && (
           <button className='flex gap-2 items-center mr-2' onClick={() => handleShowTodos(itemId)}>
@@ -77,18 +120,85 @@ function ItemRow({
             )}
           </button>
         )}
-      </div>
+        {editMode && <ItemActions {...{ item, onAction }} />}
+      </Row>
+
       <dt className='pl-4 text-sm font-medium text-gray-500'>{content}</dt>
 
-      {showTodos.includes(itemId) && todos && (
+      {(editMode || showTodos.includes(itemId)) && todos && (
         <TodoList
           {...{
             itemId,
             todos,
             handleDoneClicked,
+            editMode,
+            onAction,
           }}
         />
       )}
+    </div>
+  )
+}
+
+function ItemActions({
+  item,
+  onAction,
+}: {
+  item: Item
+  onAction: (editable: Editable, action: ActionCommand) => void
+}) {
+  const [confirm, setConfirm] = useState(false)
+
+  const todoCount = item.todos?.length || 0
+  return (
+    <div className='flex gap-2 items-center'>
+      {confirm && (
+        <ConfirmDialog
+          title={`Poista otsikko`}
+          message={`Haluatko varmasti poistaa otsikon ${todoCount > 0 ? 'ja sen tehtävät' : ''}?`}
+          onConfirm={() => onAction(item, 'delete')}
+          onClose={() => setConfirm(false)}
+          confirmLabel={'Poista'}
+        />
+      )}
+
+      <button className='flex gap-2 items-center' disabled={item.level < 1} onClick={() => onAction(item, 'levelUp')}>
+        <PlusCircleIcon className={`h-4 ${item.level < 1 ? 'opacity-25' : ''}`} />
+      </button>
+      <button className='flex gap-2 items-center' disabled={item.level > 2} onClick={() => onAction(item, 'levelDown')}>
+        <MinusCircleIcon className={`h-4 ${item.level > 1 ? 'opacity-25' : ''}`} />
+      </button>
+      <button className='flex gap-2 items-center ml-4' onClick={() => setConfirm(true)}>
+        <TrashIcon className='h-4 w-4' />
+      </button>
+    </div>
+  )
+}
+
+function TodoActions({
+  todo,
+  onAction,
+}: {
+  todo: Todo
+  onAction: (editable: Editable, action: ActionCommand) => void
+}) {
+  const [confirm, setConfirm] = useState(false)
+
+  return (
+    <div className='flex gap-2 items-center'>
+      {confirm && (
+        <ConfirmDialog
+          title={`Poista tehtävä`}
+          message={`Haluatko varmasti poistaa 'tehtävän'}?`}
+          onConfirm={() => onAction(todo, 'delete')}
+          onClose={() => setConfirm(false)}
+          confirmLabel={'Poista'}
+        />
+      )}
+
+      <button className='flex gap-2 items-center ml-4' onClick={() => setConfirm(true)}>
+        <TrashIcon className='h-4 w-4' />
+      </button>
     </div>
   )
 }
@@ -126,10 +236,14 @@ export function TodoList({
   itemId,
   todos,
   handleDoneClicked,
+  editMode,
+  onAction,
 }: {
   itemId: string
   todos: Todo[]
   handleDoneClicked: (itemId: string, todo: Todo) => void
+  editMode: boolean
+  onAction: (editable: Editable, action: ActionCommand) => void
 }) {
   return (
     <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>
@@ -144,12 +258,15 @@ export function TodoList({
               // onClick={() => isTodo && handleDoneClicked && handleDoneClicked(itemId, todo)}
             >
               <EditTodoTitle {...{ itemId, todo }} />
-              <CheckBox
-                className={`flex-shrink-0 h-3 w-3 pr-0 ${todo.done ? 'text-blue-900' : 'text-gray-400'}`}
-                aria-hidden='true'
-                checked={todo.done}
-                onChange={() => handleDoneClicked(itemId, todo)}
-              />
+              {!editMode && (
+                <CheckBox
+                  className={`flex-shrink-0 h-3 w-3 pr-0 ${todo.done ? 'text-blue-900' : 'text-gray-400'}`}
+                  aria-hidden='true'
+                  checked={todo.done}
+                  onChange={() => handleDoneClicked(itemId, todo)}
+                />
+              )}
+              {editMode && <TodoActions {...{ todo, onAction }} />}
               <div className='ml-4 flex-shrink-0'>{todo.content}</div>
             </li>
           )

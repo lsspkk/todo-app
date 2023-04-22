@@ -1,9 +1,9 @@
 import { FolderIcon, TrashIcon } from '@heroicons/react/outline'
 import { File } from 'api/apiTypes'
-import Button from 'components/Button'
 import { useState } from 'react'
 import { removeFile } from 'store/filesReducer'
 import { useAppDispatch } from 'store/hooks'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 
 export function FileList({
   files,
@@ -48,24 +48,14 @@ function ConfirmDeleteDialog({ onClose, file }: { onClose: () => void; file: Fil
     }
   }
   return (
-    <Dialog onClose={onClose}>
-      <div className='text-l'>Poista tiedosto</div>
-      <div className='text-sm'>Haluatko varmasti poistaa tiedoston {file.name}?</div>
-      <div className='flex justify-between gap-8 sm:gap-20 md:w-'>
-        <Button onClick={onClose}>Peruuta</Button>
-        <Button onClick={() => onDelete()}>Poista</Button>
-      </div>
+    <ConfirmDialog
+      onClose={onClose}
+      title='Poista tiedosto'
+      message={`Haluatko varmasti poistaa tiedoston ${file.name}?`}
+      onConfirm={() => onDelete()}
+      confirmLabel='Poista'
+    >
       {error.length > 0 && <div className='text-sm text-red-800'>{error}</div>}
-    </Dialog>
-  )
-}
-
-function Dialog({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
-  return (
-    <div className='fixed inset-0' onClick={onClose}>
-      <div className='fixed inset-0 top-16 sm:justify-center sm:inset-40 sm:border-2 p-4 sm:max-h-80 sm:h-auto sm:p-8 z-10 overflow-y-auto flex flex-col gap-4 bg-white shadow-sm'>
-        <div className='flex flex-col gap-8'>{children}</div>
-      </div>
-    </div>
+    </ConfirmDialog>
   )
 }

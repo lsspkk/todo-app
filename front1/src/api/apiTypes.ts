@@ -27,6 +27,16 @@ export interface Todo {
   isSavedInDatabase?: boolean
 }
 
+export type Editable = Item | Todo
+
+export const isItem = (b: Editable): b is Item => {
+  return (b as Todo).done === undefined
+}
+
+export const isTodo = (b: Editable): b is Todo => {
+  return (b as Todo).done !== undefined
+}
+
 export interface NewFile {
   name: string
   content: string

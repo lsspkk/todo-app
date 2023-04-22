@@ -65,6 +65,12 @@ export async function getItem(id: string): Promise<Item> {
   return response.json()
 }
 
+export async function deleteItem(id: string): Promise<string> {
+  const response = await window.fetch(`${apiUrl}/items/${id}`, { method: 'DELETE', credentials: 'include' })
+  if (!response.ok) throw new Error(await response.text())
+  return id
+}
+
 export async function putItem(item: Item, thunkApi: any): Promise<Item> {
   const response = await window.fetch(`${apiUrl}/items/${item.id}`, {
     method: 'PUT',
@@ -78,6 +84,15 @@ export async function putItem(item: Item, thunkApi: any): Promise<Item> {
   const data = await response.json()
   if (!response.ok) return thunkApi.rejectWithValue(data)
   return data as Item
+}
+
+export async function deleteTodo(todo: Todo): Promise<Todo> {
+  const response = await window.fetch(`${apiUrl}/items/${todo.itemId}/todos/${todo.id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!response.ok) throw new Error(await response.text())
+  return todo
 }
 
 export async function putTodo({ itemId, todo }: TodoItemUpdate, thunkApi: any): Promise<TodoItemUpdate> {

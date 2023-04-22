@@ -8,7 +8,7 @@ For development, place these in .env -file
 
 INVITATION_CODE_SECRET
 
-A string that is required in registering a new user.
+List of invitation codes for registering a new user, for exampmle: secret,password,silly
 
 SECRET_COOKIE_KEY
 
