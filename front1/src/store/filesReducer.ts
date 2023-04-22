@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { getFile, getFiles, postFile } from '../api/api'
+import { getFile, getFiles, postFile, deleteFile } from '../api/api'
 import { ApiError, File, NewFile, Todo } from '../api/apiTypes'
 
 export interface FilesStore {
@@ -19,6 +19,7 @@ export type FilesStoreAction =
   | { type: 'getFiles/fulfilled'; payload: File[] }
   | { type: 'getFile/fulfilled'; payload: File }
   | { type: 'postFile/fulfilled'; payload: File }
+  | { type: 'deleteFile/fulfilled'; payload: string }
 
 export const filesReducer = (
   state: FilesStore = initialUserState,
@@ -37,6 +38,12 @@ export const filesReducer = (
       files: [...state.files, action.payload].sort((a, b) => (a.name < b.name ? -1 : b.name > a.name ? 1 : 0)),
     }
   }
+  if (action.type === 'deleteFile/fulfilled') {
+    return {
+      ...state,
+      files: state.files.filter((file) => file.id !== action.payload),
+    }
+  }
   return state
 }
 
@@ -47,3 +54,4 @@ export const addFile = createAsyncThunk<File, NewFile, { rejectValue: ApiError }
   'postFile',
   async (file: NewFile, thunkApi) => postFile(file, thunkApi)
 )
+export const removeFile = createAsyncThunk('deleteFile', async (id: string) => deleteFile(id))

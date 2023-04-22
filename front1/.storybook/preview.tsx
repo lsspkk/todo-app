@@ -1,7 +1,8 @@
-import { addDecorator } from '@storybook/react'
 import 'tailwindcss/tailwind.css'
 import { MemoryRouter } from 'react-router'
+import { Provider } from 'react-redux'
 import React from 'react'
+import { configureStore, createSlice } from '@reduxjs/toolkit'
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -13,4 +14,14 @@ export const parameters = {
   },
 }
 
-addDecorator((story: () => any) => <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>)
+export const decorators = [
+  (story: () => any) => (
+    <Provider
+      store={configureStore({
+        reducer: {},
+      })}
+    >
+      <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
+    </Provider>
+  ),
+]

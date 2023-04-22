@@ -69,7 +69,7 @@ function ItemRow({
       >
         <EditTitle {...{ item }} />
         {showToggle && (
-          <button className='flex gap-2 items-center' onClick={() => handleShowTodos(itemId)}>
+          <button className='flex gap-2 items-center mr-2' onClick={() => handleShowTodos(itemId)}>
             {showTodos.includes(itemId) ? (
               <ChevronUpIcon className='h-4 w-4' />
             ) : (
@@ -133,27 +133,24 @@ export function TodoList({
 }) {
   return (
     <dd className='mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2'>
-      <ul className='divide-y divide-gray-200'>
+      <ul className='divide-y divide-gray-200 ml-6'>
         {todos?.map((todo, i) => {
           const id = `id.${todo.id}.${itemId}`
           return (
-            <li key={`${itemId}-todo-${id}`} className='pl-4 pr-4 py-1 flex items-center justify-between text-sm'>
-              <div>
-                <button
-                  className='flex items-center'
-                  // disabled={!isTodo}
-                  // onClick={() => isTodo && handleDoneClicked && handleDoneClicked(itemId, todo)}
-                >
-                  <CheckBox
-                    className={`flex-shrink-0 h-3 w-3 ${todo.done ? 'text-blue-900' : 'text-gray-400'}`}
-                    aria-hidden='true'
-                    checked={todo.done}
-                    onChange={() => handleDoneClicked(itemId, todo)}
-                  />
-                  <EditTodoTitle {...{ itemId, todo }} />
-                </button>
-                <div className='ml-4 flex-shrink-0'>{todo.content}</div>
-              </div>
+            <li
+              key={`${itemId}-todo-${id}`}
+              className='pl-4 py-1 flex items-center justify-between text-sm flex items-center w-full'
+              // disabled={!isTodo}
+              // onClick={() => isTodo && handleDoneClicked && handleDoneClicked(itemId, todo)}
+            >
+              <EditTodoTitle {...{ itemId, todo }} />
+              <CheckBox
+                className={`flex-shrink-0 h-3 w-3 pr-0 ${todo.done ? 'text-blue-900' : 'text-gray-400'}`}
+                aria-hidden='true'
+                checked={todo.done}
+                onChange={() => handleDoneClicked(itemId, todo)}
+              />
+              <div className='ml-4 flex-shrink-0'>{todo.content}</div>
             </li>
           )
         })}
@@ -213,7 +210,7 @@ function TitleEdit({ name, title, onSubmit }: { name: string; title: string; onS
         onClick={() => setIsEdit(() => true)}
       />
       {isEdit && (
-        <div className='flex items-center gap-4' style={{ zIndex: 101 }}>
+        <div className='flex items-center gap-4 sm:mr-0 mr-4' style={{ zIndex: 101 }}>
           <button type='submit' onClick={onChange}>
             OK
           </button>

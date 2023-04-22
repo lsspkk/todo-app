@@ -65,7 +65,7 @@ export async function getItem(id: string): Promise<Item> {
   return response.json()
 }
 
-export async function putItem({ item }: Item, thunkApi: any): Promise<Item> {
+export async function putItem(item: Item, thunkApi: any): Promise<Item> {
   const response = await window.fetch(`${apiUrl}/items/${item.id}`, {
     method: 'PUT',
     headers: {
@@ -77,7 +77,7 @@ export async function putItem({ item }: Item, thunkApi: any): Promise<Item> {
 
   const data = await response.json()
   if (!response.ok) return thunkApi.rejectWithValue(data)
-  return data as Item 
+  return data as Item
 }
 
 export async function putTodo({ itemId, todo }: TodoItemUpdate, thunkApi: any): Promise<TodoItemUpdate> {
@@ -119,4 +119,14 @@ export async function postFile(newFile: NewFile, thunkApi: any): Promise<File> {
   const data = await response.json()
   if (!response.ok) return thunkApi.rejectWithValue(data)
   return data as File
+}
+
+export async function deleteFile(id: string): Promise<string> {
+  const response = await window.fetch(`${apiUrl}/files/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+
+  if (!response.ok) throw new Error(await response.text())
+  return id
 }
