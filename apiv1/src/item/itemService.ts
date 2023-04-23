@@ -77,7 +77,6 @@ export const putItem = ({ accountId, params, ...req }: ApiRequest, reply) => {
     return
   }
   const item = { ...(req.body as Item), accountId }
-  item.todos = undefined // could handle update of todos here
   const newItems = items.map((i) => (i.id !== id ? { ...i } : { ...item }))
   setItems(newItems)
   reply.send(item)

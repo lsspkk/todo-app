@@ -4,8 +4,8 @@ import MainMenuContainer from '../components/MainMenu'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from 'store/hooks'
 import { UserAccount } from 'api/apiTypes'
-import { ItemListContainer } from './ItemListContainer'
 import { FileListContainer } from 'files/FileListContainer'
+import { ItemListContainer } from 'items/ItemListContainer'
 
 function Home() {
   const navigate = useNavigate()

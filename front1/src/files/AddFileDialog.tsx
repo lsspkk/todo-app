@@ -1,6 +1,6 @@
 import { Item, NewFile } from 'api/apiTypes'
 import Button from 'components/Button'
-import { ItemList } from 'home/ItemList'
+import { ItemList } from 'items/ItemList'
 import React, { useState } from 'react'
 import { markdownParse } from 'service/markdown'
 
@@ -29,24 +29,28 @@ export function AddFileDialog({ saveFile, hideAdd }: AddFileDialogProps) {
   }
   return (
     <div className='m-4'>
-      <div className='flex gap-8 items-center mt-8 content-between flex-wrap'>
-        <div className='w-full sm:w-3/6 md:flex'>
-          <h3 className='text-lg leading-6 font-medium pr-4'>Lue MarkDown Tiedosto</h3>
-          <input type='file' accept='.md' onChange={handleChange} />
+      <div className='flex gap-8 items-center mt-8 justify-end sm:justify-between flex-wrap'>
+        <div className='w-full sm:w-auto flex-col flex md:flex-row'>
+          <h3 className='text-lg leading-6 font-medium pr-4  whitespace-nowrap'>Lue MarkDown Tiedosto</h3>
+          <input
+            className='mt-8 sm:mt-0 w-auto self-end sm:self-start text-right sm:text-left'
+            type='file'
+            accept='.md'
+            onChange={handleChange}
+          />
         </div>
-        <div className='w-full sm:w-2/6 flex'>
-          <Button
-            className='w-1/2 mr-2  bg-transparent text-gray-700 border-2 border-gray-500 hover:bg-gray-200'
-            onClick={hideAdd}
-          >
+        <div className='w-[100px] flex justify-end items-end'>
+          <Button className='mr-2' onClick={hideAdd} variant='gray'>
             Peruuta
           </Button>
-          <Button
-            className={`w-1/2   ${items ? 'bg-indigo-900' : 'bg-gray-500'}`}
-            onClick={() => newFile && saveFile(newFile)}
-          >
-            Tuo
-          </Button>
+          {newFile && (
+            <Button
+              className={`w-1/2   ${items ? 'bg-indigo-900' : 'bg-gray-500'}`}
+              onClick={() => newFile && saveFile(newFile)}
+            >
+              Tuo
+            </Button>
+          )}
         </div>
       </div>
       {newFile && items && (

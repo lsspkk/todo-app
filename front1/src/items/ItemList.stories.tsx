@@ -2,7 +2,6 @@ import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
 import { ItemList } from './ItemList'
 import { Item, Todo } from 'api/apiTypes'
-import { Provider } from 'react-redux'
 
 export default { component: ItemList } as Meta<typeof ItemList>
 

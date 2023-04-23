@@ -26,7 +26,9 @@ export function ConfirmDialog({
           <div className='text-sm'>{message}</div>
 
           <div className='flex justify-between gap-8 sm:gap-20 md:w-'>
-            <Button onClick={onClose}>Peruuta</Button>
+            <Button variant='gray' onClick={onClose}>
+              Peruuta
+            </Button>
             <Button onClick={onConfirm}>{confirmLabel}</Button>
           </div>
 
