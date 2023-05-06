@@ -19,7 +19,8 @@ Vaihdettu VITE webpackin ja create-react-appin tilalle
 
 Vaatii nodejs 16
 
-
-
 # TODO
+
 - poista focus kun klikkaa enteriä ja tallettaa item nimen muutokset
+- arrow-down-on-square lisäysnappulaksi
+- drag-and-drop

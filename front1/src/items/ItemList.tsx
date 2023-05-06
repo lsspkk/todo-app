@@ -1,4 +1,4 @@
-import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/outline'
+import { MinusCircleIcon, PlusCircleIcon, PlusSmIcon, TrashIcon } from '@heroicons/react/outline'
 import { ConfirmDialog } from 'components/ConfirmDialog'
 import { useState } from 'react'
 import { useAppDispatch } from 'store/hooks'
@@ -52,8 +52,11 @@ export function ItemList({
   return (
     <div className='border-t border-gray-200 w-full'>
       <dl>
-        {items.map((item) => (
-          <ItemRow key={item.id} {...{ item, showTodos, handleShowTodos, handleDoneClicked, editMode, onAction }} />
+        {items.map((item, index) => (
+          <ItemRow
+            key={item.id}
+            {...{ index, item, showTodos, handleShowTodos, handleDoneClicked, editMode, onAction }}
+          />
         ))}
       </dl>
     </div>
@@ -63,7 +66,9 @@ export function ItemList({
 export function ItemActions({
   item,
   onAction,
+  index,
 }: {
+  index: number
   item: Item
   onAction: (editable: Editable, action: ActionCommand) => void
 }) {
@@ -88,6 +93,15 @@ export function ItemActions({
       <button className='flex gap-2 items-center' disabled={item.level > 2} onClick={() => onAction(item, 'levelDown')}>
         <MinusCircleIcon className={`h-4 ${item.level > 1 ? 'opacity-25' : ''}`} />
       </button>
+      {index == 0 && (
+        <button className='absolute -mt-12 ml-3'>
+          <PlusSmIcon className='h-4 w-4' />
+        </button>
+      )}
+      <button className='absolute mt-12 ml-3'>
+        <PlusSmIcon className='h-4 w-4' />
+      </button>
+
       <button className='flex gap-2 items-center ml-4' onClick={() => setConfirm(true)}>
         <TrashIcon className='h-4 w-4' />
       </button>
@@ -98,7 +112,11 @@ export function ItemActions({
 export function TodoActions({
   todo,
   onAction,
+  adding,
+  onAdd,
 }: {
+  adding: boolean
+  onAdd: () => void
   todo: Todo
   onAction: (editable: Editable, action: ActionCommand) => void
 }) {
@@ -109,13 +127,16 @@ export function TodoActions({
       {confirm && (
         <ConfirmDialog
           title={`Poista tehtävä`}
-          message={`Haluatko varmasti poistaa 'tehtävän'}?`}
+          message={`Haluatko varmasti poistaa tehtävän ${todo.title}?`}
           onConfirm={() => onAction(todo, 'delete')}
           onClose={() => setConfirm(false)}
           confirmLabel={'Poista'}
         />
       )}
 
+      <button className='absolute mt-10 -ml-9'>
+        <PlusSmIcon className='h-4 w-4' onClick={() => adding || confirm || onAdd()} />
+      </button>
       <button className='flex gap-2 items-center ml-4' onClick={() => setConfirm(true)}>
         <TrashIcon className='h-4 w-4' />
       </button>

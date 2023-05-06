@@ -61,7 +61,7 @@ export function EditableTitle({
       {isEdit && (
         <div
           onClick={() => setIsEdit(() => false)}
-          className='absolute top-0 left-0 w-full h-full bg-gray-200 opacity-75'
+          className='fixed top-0 left-0 w-full h-full bg-gray-200 opacity-75'
           style={{ zIndex: 100 }}
         ></div>
       )}

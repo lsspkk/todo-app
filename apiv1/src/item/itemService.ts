@@ -18,7 +18,7 @@ export const getItems = ({ accountId }: ApiRequest, reply) => {
       content,
       level,
       children,
-      todoCount: getTodoCount(accountId, id),
+      todos: getCleanTodos(accountId, id),
     }))
   reply.send(clean)
 }

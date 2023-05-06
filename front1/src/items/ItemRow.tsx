@@ -28,7 +28,9 @@ export function ItemRow({
   handleDoneClicked,
   editMode,
   onAction,
+  index,
 }: {
+  index: number
   item: Item
   handleDoneClicked: (itemId: string, todo: Todo) => void
   showTodos: string[]
@@ -55,7 +57,7 @@ export function ItemRow({
             )}
           </button>
         )}
-        {editMode && <ItemActions {...{ item, onAction }} />}
+        {editMode && <ItemActions {...{ index, item, onAction }} />}
       </Row>
 
       <dt className='pl-4 text-sm font-medium text-gray-500'>{content}</dt>
