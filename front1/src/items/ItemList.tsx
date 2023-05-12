@@ -2,7 +2,7 @@ import { MinusCircleIcon, PlusCircleIcon, PlusSmIcon, TrashIcon } from '@heroico
 import { ConfirmDialog } from 'components/ConfirmDialog'
 import { useState } from 'react'
 import { useAppDispatch } from 'store/hooks'
-import { removeItem, removeTodo, updateItem } from 'store/itemsReducer'
+import { createTodo, removeItem, removeTodo, updateItem } from 'store/itemsReducer'
 import { Item, Todo, Editable, isItem, isTodo } from '../api/apiTypes'
 import { ItemRow } from './ItemRow'
 
@@ -33,7 +33,7 @@ export function ItemList({
     }
   }
 
-  function onAction(editable: Editable, action: ActionCommand) {
+  function onAction(editable: Editable, action: ActionCommand, itemId?: string, index?: number) {
     if (action === 'delete' && isTodo(editable)) {
       const todo = editable as Todo
       dispatch(removeTodo(todo))
@@ -46,6 +46,11 @@ export function ItemList({
       } else if (action === 'levelDown') {
         dispatch(updateItem({ ...item, level: item.level + 1 }))
       }
+    } else if (action === 'add' && isTodo(editable) && itemId) {
+      const todo = editable as Todo
+      dispatch(createTodo({ itemId, todo, index: index || 0 }))
+    } else if (action === 'add' && isItem(editable) && itemId) {
+      // FIXME: find the add location using itemId and index
     }
   }
 

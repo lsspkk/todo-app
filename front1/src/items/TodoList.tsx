@@ -1,8 +1,9 @@
 import CheckBox from 'components/Checkbox'
 import React from 'react'
-import { Todo, Editable, Item } from '../api/apiTypes'
+import { Todo, Editable } from '../api/apiTypes'
 import { ActionCommand, TodoActions } from './ItemList'
 import { EditableTodoTitle } from './EditableTitle'
+import { AddTodoPanel } from './AddTodoPanel'
 
 export function TodoList({
   itemId,
@@ -15,7 +16,7 @@ export function TodoList({
   todos: Todo[]
   handleDoneClicked: (itemId: string, todo: Todo) => void
   editMode: boolean
-  onAction: (editable: Editable, action: ActionCommand) => void
+  onAction: (editable: Editable, action: ActionCommand, itemId?: string, index?: number) => void
 }) {
   const [adding, setAdding] = React.useState<number | undefined>()
   return (
@@ -34,40 +35,24 @@ export function TodoList({
                   onChange={() => handleDoneClicked(itemId, todo)}
                   disabled={editMode}
                 />
+                <div className='ml-4 flex-shrink-0'>{todo.content}</div>
                 {editMode && (
                   <TodoActions {...{ todo, onAction, onAdd: () => setAdding(index), adding: index == adding }} />
                 )}
-                <div className='ml-4 flex-shrink-0'>{todo.content}</div>
               </li>
-              {adding === index && <AddItemTodo {...{ onAction, onCancel: () => setAdding(undefined) }} />}
+              {adding === index && (
+                <AddTodoPanel
+                  {...{
+                    todo,
+                    onAction: (e: Editable) => onAction(e, 'add', itemId, index + 1),
+                    onCancel: () => setAdding(undefined),
+                  }}
+                />
+              )}
             </React.Fragment>
           )
         })}
       </ul>
     </dd>
-  )
-}
-
-function AddItemTodo({
-  onAction,
-  onCancel,
-}: {
-  onAction: (editable: Editable, action: ActionCommand) => void
-  onCancel: () => void
-}) {
-  return (
-    <li className='w-full'>
-      <div
-        onClick={() => onCancel()}
-        className='fixed top-0 left-0 w-full h-full bg-gray-200 opacity-75'
-        style={{ zIndex: 100 }}
-      ></div>
-      <div
-        className='rounded w-full pl-4 py-2 flex justify-between bg-white relative -ml-4 shadow'
-        style={{ zIndex: 101 }}
-      >
-        Lisäys
-      </div>
-    </li>
   )
 }

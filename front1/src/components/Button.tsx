@@ -6,7 +6,6 @@ export default function Button({
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'gray' }) {
   const cn = props.className ? ` ${props.className}` : ''
-  console.log({ cn })
   return (
     <button
       {...props}

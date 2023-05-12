@@ -1,4 +1,4 @@
-import { TodoItemUpdate } from 'store/itemsReducer'
+import { TodoItemAdd, TodoItemUpdate } from 'store/itemsReducer'
 import { File, Item, NewFile, Todo, UserAccount } from './apiTypes'
 
 const apiUrl = import.meta.env.REACT_APP_API_URL ? import.meta.env.REACT_APP_API_URL : 'http://localhost:5000'
@@ -93,6 +93,20 @@ export async function deleteTodo(todo: Todo): Promise<Todo> {
   })
   if (!response.ok) throw new Error(await response.text())
   return todo
+}
+
+export async function postTodo({ itemId, todo, index }: TodoItemAdd, thunkApi: any): Promise<TodoItemAdd> {
+  const response = await window.fetch(`${apiUrl}/items/${itemId}/todos`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json;charset=UTF-8',
+    },
+    credentials: 'include',
+    body: JSON.stringify(todo),
+  })
+  const data = await response.json()
+  if (!response.ok) return thunkApi.rejectWithValue(data)
+  return { itemId, todo: data as Todo, index }
 }
 
 export async function putTodo({ itemId, todo }: TodoItemUpdate, thunkApi: any): Promise<TodoItemUpdate> {

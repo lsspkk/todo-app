@@ -49,9 +49,9 @@ export const postTodo = ({ accountId, ...req }, reply) => {
   }
   const newTodo = req.body as Todo
   const id = v4()
-  const todo = { id, accountId, ...newTodo }
+  const todo = { accountId, ...newTodo, id }
   setTodos([...todos, todo])
-  reply.send({ id, ...newTodo })
+  reply.send({ ...newTodo, id })
 }
 
 export const putTodo = ({ accountId, params, ...req }: ApiRequest, reply) => {

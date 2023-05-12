@@ -36,7 +36,7 @@ export function ItemRow({
   showTodos: string[]
   handleShowTodos: (itemId: string) => void
   editMode: boolean
-  onAction: (item: Editable, action: ActionCommand) => void
+  onAction: (item: Editable, action: ActionCommand, itemId?: string, index?: number) => void
 }) {
   const { content, level } = item
   const itemId = item.id

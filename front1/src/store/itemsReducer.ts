@@ -1,5 +1,5 @@
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
-import { deleteItem, deleteTodo, getFileItems, getItem, getItems, putItem, putTodo } from '../api/api'
+import { deleteItem, deleteTodo, getFileItems, getItem, getItems, postTodo, putItem, putTodo } from '../api/api'
 import { ApiError, Item, Todo } from '../api/apiTypes'
 
 export interface ItemsStore {
@@ -13,6 +13,12 @@ export interface TodoItemUpdate {
   todo: Todo
 }
 
+export interface TodoItemAdd {
+  itemId: string
+  todo: Todo
+  index: number
+}
+
 export type ItemsStoreAction =
   | { type: 'NONE' }
   | { type: 'getItems/fulfilled'; payload: Item[] }
@@ -20,6 +26,7 @@ export type ItemsStoreAction =
   | { type: 'getItem/fulfilled'; payload: Item }
   | { type: 'putItem/fulfilled'; payload: Item }
   | { type: 'putTodo/fulfilled'; payload: TodoItemUpdate }
+  | { type: 'createTodo/fulfilled'; payload: TodoItemAdd }
   | { type: 'deleteItem/fulfilled'; payload: string }
   | { type: 'deleteTodo/fulfilled'; payload: Todo }
   | { type: 'updateTodoValue'; payload: TodoItemUpdate }
@@ -62,6 +69,16 @@ export const itemsReducer = (
       ),
     }
   }
+  if (a === 'createTodo/fulfilled') {
+    return {
+      ...state,
+      items: state.items.map((i) =>
+        i.id !== action.payload.itemId
+          ? i
+          : { ...i, todos: addToArray(i.todos || [], action.payload.index, action.payload.todo) }
+      ),
+    }
+  }
   return state
 }
 
@@ -76,6 +93,11 @@ export const updateItem = createAsyncThunk<Item, Item, { rejectValue: ApiError }
 )
 
 export const removeTodo = createAsyncThunk('deleteTodo', async (todo: Todo) => deleteTodo(todo))
+
+export const createTodo = createAsyncThunk<TodoItemAdd, TodoItemAdd, { rejectValue: ApiError }>(
+  'createTodo',
+  async (todo: TodoItemAdd, thunkApi) => postTodo(todo, thunkApi)
+)
 
 export const updateItemTodo = createAsyncThunk<TodoItemUpdate, TodoItemUpdate, { rejectValue: ApiError }>(
   'putTodo',
@@ -93,4 +115,7 @@ function doUpdateItemTodo(updatedTodo: Todo, oldTodos?: Todo[]) {
     return [...oldTodos, { ...updatedTodo }]
   }
   return oldTodos.map((t) => (t.id !== updatedTodo.id ? t : { ...updatedTodo }))
+}
+function addToArray(todos: Todo[], index: number, todo: Todo): any | Todo[] | undefined {
+  return [...todos.slice(0, index), todo, ...todos.slice(index)]
 }
